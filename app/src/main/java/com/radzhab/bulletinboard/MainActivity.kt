@@ -4,8 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
-import android.view.SearchEvent
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -15,6 +15,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
@@ -35,6 +36,20 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         init()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.id_new_ads) {
+            val i = Intent(this, EditAdsActivity::class.java)
+            startActivity(i)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
@@ -43,7 +58,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                if (account != null){
+                if (account != null) {
                     dialogHelper.accHelper.signInFirebaseWithGoogle(account.idToken.toString())
                 }
             } catch (e: ApiException) {
@@ -59,6 +74,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
     }
 
     private fun init() {
+        setSupportActionBar(rootElement.mainContent.toolbar)
         val toggle =
             ActionBarDrawerToggle(
                 this,
@@ -91,6 +107,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
             R.id.id_sign_out -> {
                 uiUpdate(null)
                 myAuth.signOut()
+                dialogHelper.accHelper.signOutGoogle()
             }
         }
         rootElement.drawerLayout.closeDrawer(GravityCompat.START)

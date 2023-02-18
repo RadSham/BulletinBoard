@@ -28,6 +28,7 @@ class DialogHelper(act: MainActivity) {
         }
         rootDialogElement.btGoogleSignIn.setOnClickListener {
             accHelper.signInWithGoogle()
+            dialog?.dismiss()
         }
         dialog.show()
     }

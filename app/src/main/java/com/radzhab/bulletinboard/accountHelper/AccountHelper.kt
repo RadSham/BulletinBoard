@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.EmailAuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
@@ -94,6 +95,16 @@ class AccountHelper(act: MainActivity) {
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
+                        } else if (task.exception is FirebaseAuthInvalidUserException) {
+                            val exception =
+                                task.exception as FirebaseAuthInvalidUserException
+                            if (exception.errorCode == FirebaseAuthConstants.ERROR_USER_NOT_FOUND) {
+                                Toast.makeText(
+                                    act,
+                                    FirebaseAuthConstants.ERROR_USER_NOT_FOUND,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
                     }
                 }
@@ -131,6 +142,10 @@ class AccountHelper(act: MainActivity) {
         signInClient = getSignInClient()
         val intent = signInClient.signInIntent
         act.startActivityForResult(intent, GOOGLE_SIGN_IN_REQUEST_CODE)
+    }
+
+    fun signOutGoogle() {
+        getSignInClient().signOut()
     }
 
     fun signInFirebaseWithGoogle(token: String) {
