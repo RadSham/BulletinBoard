@@ -26,5 +26,8 @@
     <string name="send_verification_email_error">Не удалось отправить email для подтверждения</string>
     <string name="send_verification_email_done">На вашу почту была отправленна ссылка для верификации</string>
     <string name="dialog_reset_email_message">Для восстановления пароля укажите email адрес</string>
+    <!-- Account Dialogs -->
+    <string name="link_done">Email успешно синхронизирован</string>
+    <string name="entry_to_g">У Вас уже есть аккаунта Google. </string>
 
 </resources>
