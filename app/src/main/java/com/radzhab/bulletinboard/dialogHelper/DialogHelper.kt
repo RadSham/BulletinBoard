@@ -10,7 +10,7 @@ import com.radzhab.bulletinboard.databinding.SignDialogBinding
 
 class DialogHelper(act: MainActivity) {
     private val activity = act
-    private val accHelper = AccountHelper(activity)
+    val accHelper = AccountHelper(activity)
 
     fun createSignDialog(index: Int) {
         val builder = AlertDialog.Builder(activity)
@@ -25,6 +25,9 @@ class DialogHelper(act: MainActivity) {
         }
         rootDialogElement.btForgetP.setOnClickListener {
             setOnClickPressedPassword(rootDialogElement, dialog)
+        }
+        rootDialogElement.btGoogleSignIn.setOnClickListener {
+            accHelper.signInWithGoogle()
         }
         dialog.show()
     }

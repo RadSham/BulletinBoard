@@ -1,19 +1,24 @@
 package com.radzhab.bulletinboard
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.SearchEvent
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
+import com.radzhab.bulletinboard.dialogHelper.GoogleAccConst.GOOGLE_SIGN_IN_REQUEST_CODE
 
 class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
 
@@ -28,6 +33,24 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         val view = rootElement.root
         setContentView(view)
         init()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
+
+//            Log.d("MyLOG", "sign in result")
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                if (account != null){
+                    dialogHelper.accHelper.signInFirebaseWithGoogle(account.idToken.toString())
+                }
+            } catch (e: ApiException) {
+                Log.d("MyLog", "Api error : ${e.message}")
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onStart() {
