@@ -29,21 +29,16 @@
 
             </androidx.viewpager2.widget.ViewPager2>
 
-            <android.widget.SearchView
-                android:id="@+id/countrySearch"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp" />
-
-            <Spinner
-                android:id="@+id/spCountry"
+            <TextView
+                android:id="@+id/tvSelectCountry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp" />
+                android:background="@android:drawable/editbox_background"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/select_country" />
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
