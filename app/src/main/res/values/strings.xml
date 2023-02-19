@@ -28,6 +28,10 @@
     <string name="dialog_reset_email_message">Для восстановления пароля укажите email адрес</string>
     <!-- Account Dialogs -->
     <string name="link_done">Email успешно синхронизирован</string>
-    <string name="entry_to_g">У Вас уже есть аккаунт Google. </string>
+    <string name="entry_to_g">У Вас уже есть аккаунт Google.</string>
+    <!-- Spinner Dialogs -->
+    <string name="no_result">No result</string>
+
+
 
 </resources>
