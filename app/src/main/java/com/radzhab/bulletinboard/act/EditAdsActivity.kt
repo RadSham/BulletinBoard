@@ -7,6 +7,7 @@ import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
 import com.radzhab.bulletinboard.utils.CityHelper
+import com.radzhab.bulletinboard.utils.ImagePicker
 
 class EditAdsActivity : AppCompatActivity() {
     lateinit var rootElement: ActivityEditAdsBinding
@@ -25,6 +26,7 @@ class EditAdsActivity : AppCompatActivity() {
                 rootElement.tvSelectCity.text = getString(R.string.select_city)
             }
         }
+        //onClick tvSelectCity
         rootElement.tvSelectCity.setOnClickListener {
             val selectedCountry = rootElement.tvSelectCountry.text.toString()
             if (selectedCountry != getString(R.string.select_country)) {
@@ -35,7 +37,13 @@ class EditAdsActivity : AppCompatActivity() {
                     .show()
             }
         }
+        //onClick GetImage
+        rootElement.btGetImage.setOnClickListener {
+            ImagePicker.launcher(this, 3)
+        }
     }
+
+
 
     private fun init() {
 
