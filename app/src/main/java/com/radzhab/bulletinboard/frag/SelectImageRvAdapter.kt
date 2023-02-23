@@ -8,8 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.radzhab.bulletinboard.R
+import com.radzhab.bulletinboard.utils.ItemTouchMoveCallback
 
-class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHolder>() {
+class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHolder>(),
+    ItemTouchMoveCallback.ItemTouchAdapter {
 
     val mainArray = ArrayList<SelectImageItem>()
 
@@ -27,6 +29,14 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
         return mainArray.size
     }
 
+    override fun onMove(startPos: Int, targetPos: Int) {
+        val targetItem = mainArray[targetPos]
+        mainArray[targetPos] = mainArray[startPos]
+        mainArray[startPos] = targetItem
+        notifyItemMoved(startPos,targetPos)
+    }
+
+
     class ImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         lateinit var tvTitle: TextView
         lateinit var image: ImageView
@@ -39,10 +49,11 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
         }
     }
 
-    fun updateAdapter(newList:List<SelectImageItem>){
+    fun updateAdapter(newList: List<SelectImageItem>) {
         mainArray.clear()
         mainArray.addAll(newList)
         notifyDataSetChanged()
     }
+
 
 }
