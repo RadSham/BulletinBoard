@@ -1,15 +1,17 @@
 package com.radzhab.bulletinboard.act
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
+import com.radzhab.bulletinboard.frag.FragmentCloseInterface
 import com.radzhab.bulletinboard.utils.CityHelper
 import com.radzhab.bulletinboard.utils.ImagePicker
 
-class EditAdsActivity : AppCompatActivity() {
+class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
     private val dialog = DialogSpinnerHelper()
 
@@ -40,12 +42,19 @@ class EditAdsActivity : AppCompatActivity() {
         //onClick GetImage
         rootElement.btGetImage.setOnClickListener {
             ImagePicker.launcher(this, 3)
+            rootElement.scrollViewMine.visibility = View.GONE
+            /*val fm = supportFragmentManager.beginTransaction()
+            fm.replace(R.id.placeholder, ImageListFrag(this, imPick))
+            fm.commit()*/
         }
     }
 
 
-
     private fun init() {
 
+    }
+
+    override fun onFragClose() {
+        rootElement.scrollViewMine.visibility = View.VISIBLE
     }
 }
