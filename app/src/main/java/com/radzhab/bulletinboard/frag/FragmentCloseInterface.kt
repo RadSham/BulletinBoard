@@ -1,5 +1,5 @@
 package com.radzhab.bulletinboard.frag
 
 interface FragmentCloseInterface {
-    fun onFragClose()
+    fun onFragClose(list: ArrayList<SelectImageItem>)
 }

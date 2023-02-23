@@ -5,21 +5,25 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.radzhab.bulletinboard.R
+import com.radzhab.bulletinboard.adaptors.ImageAdapter
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
 import com.radzhab.bulletinboard.frag.FragmentCloseInterface
+import com.radzhab.bulletinboard.frag.SelectImageItem
 import com.radzhab.bulletinboard.utils.CityHelper
 import com.radzhab.bulletinboard.utils.ImagePicker
 
 class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
     private val dialog = DialogSpinnerHelper()
+    private lateinit var imageAdapter: ImageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         rootElement = ActivityEditAdsBinding.inflate(layoutInflater)
         val view = rootElement.root
         setContentView(view)
+        init()
         //onClick tvSelectCountry
         rootElement.tvSelectCountry.setOnClickListener {
             val listCountries = CityHelper.getAllCountries(this)
@@ -49,12 +53,14 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         }
     }
 
-
     private fun init() {
-
+        imageAdapter = ImageAdapter()
+        rootElement.vpImages.adapter = imageAdapter
     }
 
-    override fun onFragClose() {
+
+    override fun onFragClose(list: ArrayList<SelectImageItem>) {
         rootElement.scrollViewMine.visibility = View.VISIBLE
+        imageAdapter.update(list)
     }
 }
