@@ -9,6 +9,7 @@ import com.radzhab.bulletinboard.adaptors.ImageAdapter
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
 import com.radzhab.bulletinboard.frag.FragmentCloseInterface
+import com.radzhab.bulletinboard.frag.ImageListFrag
 import com.radzhab.bulletinboard.frag.SelectImageItem
 import com.radzhab.bulletinboard.utils.CityHelper
 import com.radzhab.bulletinboard.utils.ImagePicker
@@ -17,6 +18,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
     private val dialog = DialogSpinnerHelper()
     private lateinit var imageAdapter: ImageAdapter
+    var chooseImageFrag: ImageListFrag? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,11 +48,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         }
         //onClick GetImage
         rootElement.btGetImage.setOnClickListener {
-            ImagePicker.launcher(this, 3)
+            ImagePicker.launcher(this, ImagePicker.MAX_IMAGE_COUNT)
             rootElement.scrollViewMine.visibility = View.GONE
-            /*val fm = supportFragmentManager.beginTransaction()
-            fm.replace(R.id.placeholder, ImageListFrag(this, imPick))
-            fm.commit()*/
         }
     }
 
@@ -62,5 +62,17 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     override fun onFragClose(list: ArrayList<SelectImageItem>) {
         rootElement.scrollViewMine.visibility = View.VISIBLE
         imageAdapter.update(list)
+        chooseImageFrag = null
     }
+
+    fun openChooseImageFrag(newList: ArrayList<String>){
+        chooseImageFrag = ImageListFrag(this, newList)
+        rootElement.scrollViewMine.visibility = View.GONE
+        val fm = supportFragmentManager.beginTransaction()
+        fm.replace(R.id.placeholder, chooseImageFrag!!)
+        fm.commit()
+    }
+
+
+
 }

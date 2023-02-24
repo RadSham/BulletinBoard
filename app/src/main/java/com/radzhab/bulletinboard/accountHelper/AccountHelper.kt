@@ -5,14 +5,7 @@ import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.EmailAuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 import com.radzhab.bulletinboard.MainActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.constants.FirebaseAuthConstants
@@ -30,8 +23,6 @@ class AccountHelper(act: MainActivity) {
                         sendEmailVerification(task.result.user!!)
                         act.uiUpdate(task.result.user)
                     } else {
-//                        Toast.makeText(act, act.resources.getString(R.string.sign_up_error), Toast.LENGTH_LONG).show()
-//                        Log.d("MyLog", "Exception : " + exception.errorCode)
                         if (task.exception is FirebaseAuthUserCollisionException) {
                             val exception = task.exception as FirebaseAuthUserCollisionException
                             if (exception.errorCode == FirebaseAuthConstants.ERROR_EMAIL_ALREADY_IN_USE) {

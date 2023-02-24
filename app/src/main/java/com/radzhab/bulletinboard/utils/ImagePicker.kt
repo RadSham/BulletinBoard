@@ -3,14 +3,13 @@ package com.radzhab.bulletinboard.utils
 import android.util.Log
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
-import com.radzhab.bulletinboard.frag.ImageListFrag
 import io.ak1.pix.helpers.PixEventCallback
 import io.ak1.pix.helpers.addPixToActivity
 import io.ak1.pix.models.Mode
 import io.ak1.pix.models.Options
 
 object ImagePicker {
-    lateinit var resultList: ArrayList<String>
+    const val MAX_IMAGE_COUNT = 3
 
     private fun getOptions(imageCounter: Int): Options {
         val options = Options().apply {
@@ -24,7 +23,6 @@ object ImagePicker {
 
     fun launcher(
         edAct: EditAdsActivity,
-//        launcher: ActivityResultLauncher<Intent>?,
         imageCounter: Int
     ) {
         edAct.addPixToActivity(R.id.placeholder, getOptions(imageCounter)) { result ->
@@ -32,24 +30,27 @@ object ImagePicker {
                 PixEventCallback.Status.SUCCESS -> {
                     val fList = edAct.supportFragmentManager.fragments
                     fList.forEach {
-                        if (it.isVisible) edAct.supportFragmentManager.beginTransaction().remove(it)
-                            .commit()
+                        if (it.isVisible) {
+                            edAct.supportFragmentManager.beginTransaction().remove(it)
+                                .commit()
+                        }
                     }
-                    val fm = edAct.supportFragmentManager.beginTransaction()
-                    fm.replace(R.id.placeholder, ImageListFrag(edAct,
-                        result.data.map { it.toString() } as ArrayList<String>))
-                    fm.commit()
-                    Log.d("MyLog", "result.data :${result.data}")
+//                  if (edAct.chooseImageFrag == null) {
+                    edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
+
+                    //TODO: adding images does not works
+                    /*} else {
+                        edAct.updateChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
+                    }*/
                 }
                 //use results as it.data
                 PixEventCallback.Status.BACK_PRESSED -> Log.d(
                     "MyLog",
                     "BACK_PRESSED"
-                ) // back pressed called
+                )
             }
 
         }
     }
-
 
 }

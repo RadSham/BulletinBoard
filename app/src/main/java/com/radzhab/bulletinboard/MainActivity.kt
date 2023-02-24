@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
 
-//            Log.d("MyLOG", "sign in result")
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
