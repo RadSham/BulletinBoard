@@ -35,6 +35,7 @@
     <string name="no_country_selected">No country selected</string>
     <!-- EditActivity ImageListFragment -->
     <string name="back">Back</string>
+    <string name="max_pics_count">Максимальное количество 3 шт.</string>
 
 
 </resources>

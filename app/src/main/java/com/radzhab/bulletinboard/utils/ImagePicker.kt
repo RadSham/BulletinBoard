@@ -35,13 +35,11 @@ object ImagePicker {
                                 .commit()
                         }
                     }
-//                  if (edAct.chooseImageFrag == null) {
-                    edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
-
-                    //TODO: adding images does not works
-                    /*} else {
+                    if (edAct.chooseImageFrag == null) {
+                        edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
+                    } else {
                         edAct.updateChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
-                    }*/
+                    }
                 }
                 //use results as it.data
                 PixEventCallback.Status.BACK_PRESSED -> Log.d(

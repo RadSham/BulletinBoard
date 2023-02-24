@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,10 +38,7 @@ class ImageListFrag(
         touchHelper.attachToRecyclerView(rootElement.rcViewSelectImage)
         rootElement.rcViewSelectImage.layoutManager = LinearLayoutManager(activity)
         rootElement.rcViewSelectImage.adapter = adapter
-        val updateList = ArrayList<SelectImageItem>()
-        for (n in 0 until newList.size)
-            updateList.add(SelectImageItem(n.toString(), newList[n]))
-        adapter.updateAdapter(updateList, true)
+        adapter.updateAdapter(newList, true)
     }
 
     override fun onDetach() {
@@ -63,6 +61,10 @@ class ImageListFrag(
         }
 
         addImageItem.setOnMenuItemClickListener {
+            if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
+                Toast.makeText(context, getString(R.string.max_pics_count), Toast.LENGTH_LONG).show()
+                return@setOnMenuItemClickListener false
+            }
             val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
             ImagePicker.launcher(activity as EditAdsActivity, imageCount)
             true
@@ -70,10 +72,6 @@ class ImageListFrag(
     }
 
     fun updateAdapter(newList: ArrayList<String>) {
-        val updateList = ArrayList<SelectImageItem>()
-        for (n in adapter.mainArray.size until newList.size + adapter.mainArray.size) {
-            updateList.add(SelectImageItem(n.toString(), newList[n-adapter.mainArray.size]))
-        }
-        adapter.updateAdapter(updateList, false)
+        adapter.updateAdapter(newList, false)
     }
 }
