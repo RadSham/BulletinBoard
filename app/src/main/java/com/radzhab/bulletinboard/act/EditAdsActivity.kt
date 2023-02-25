@@ -71,9 +71,10 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     fun openChooseImageFrag(newList: ArrayList<String>) {
         chooseImageFrag = ImageListFrag(this, newList)
         rootElement.scrollViewMine.visibility = View.GONE
-        val fm = supportFragmentManager.beginTransaction()
+       /* val fm = supportFragmentManager.beginTransaction()
         fm.replace(R.id.placeholder, chooseImageFrag!!)
-        fm.commit()
+        fm.commit()*/
+
     }
 
     fun updateChooseImageFrag(newList: ArrayList<String>) {

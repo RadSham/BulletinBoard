@@ -24,7 +24,7 @@ object ImagePicker {
     fun launcher(
         edAct: EditAdsActivity,
         imageCounter: Int,
-        updateOneImage:Boolean
+        updateOneImage: Boolean
     ) {
         edAct.addPixToActivity(R.id.placeholder, getOptions(imageCounter)) { result ->
             when (result.status) {
@@ -37,10 +37,12 @@ object ImagePicker {
                         }
                     }
                     if (edAct.chooseImageFrag == null) {
-                        edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
-                    } else if (updateOneImage){
+//                        edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
+                        val tempList = ImageManager.getImageSize(edAct, result.data[0])
+                        Log.d("MyLog", "tempList $tempList ${result.data[0]}")
+                    } else if (updateOneImage) {
                         edAct.updateOneImageFrag(result.data[0].toString())
-                    } else{
+                    } else {
                         edAct.updateChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
                     }
                 }
