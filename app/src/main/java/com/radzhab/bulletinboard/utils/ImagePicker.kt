@@ -23,7 +23,8 @@ object ImagePicker {
 
     fun launcher(
         edAct: EditAdsActivity,
-        imageCounter: Int
+        imageCounter: Int,
+        updateOneImage:Boolean
     ) {
         edAct.addPixToActivity(R.id.placeholder, getOptions(imageCounter)) { result ->
             when (result.status) {
@@ -37,7 +38,9 @@ object ImagePicker {
                     }
                     if (edAct.chooseImageFrag == null) {
                         edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
-                    } else {
+                    } else if (updateOneImage){
+                        edAct.updateOneImageFrag(result.data[0].toString())
+                    } else{
                         edAct.updateChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
                     }
                 }

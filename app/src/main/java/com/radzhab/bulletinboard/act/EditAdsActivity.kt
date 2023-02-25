@@ -1,7 +1,6 @@
 package com.radzhab.bulletinboard.act
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +18,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     private val dialog = DialogSpinnerHelper()
     private lateinit var imageAdapter: ImageAdapter
     var chooseImageFrag: ImageListFrag? = null
-
+    var editImagePosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +48,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         //onClick GetImage
         rootElement.btGetImage.setOnClickListener {
             if (imageAdapter.mainArray.size < 1) {
-                ImagePicker.launcher(this, ImagePicker.MAX_IMAGE_COUNT)
+                ImagePicker.launcher(this, ImagePicker.MAX_IMAGE_COUNT, false)
             } else {
                 openChooseImageFrag(imageAdapter.mainArray)
             }
@@ -66,7 +65,6 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     override fun onFragClose(list: ArrayList<String>) {
         rootElement.scrollViewMine.visibility = View.VISIBLE
         imageAdapter.update(list)
-        Log.d("MyLog", "onFragClose ${imageAdapter.mainArray}")
 //        chooseImageFrag = null
     }
 
@@ -80,6 +78,15 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
 
     fun updateChooseImageFrag(newList: ArrayList<String>) {
         chooseImageFrag!!.updateAdapter(newList)
+        chooseImageFrag = ImageListFrag(this, chooseImageFrag!!.adapter.mainArray)
+        rootElement.scrollViewMine.visibility = View.GONE
+        val fm = supportFragmentManager.beginTransaction()
+        fm.replace(R.id.placeholder, chooseImageFrag!!)
+        fm.commit()
+    }
+
+    fun updateOneImageFrag(newImage: String) {
+        chooseImageFrag!!.setSingleImage(newImage, editImagePosition)
         chooseImageFrag = ImageListFrag(this, chooseImageFrag!!.adapter.mainArray)
         rootElement.scrollViewMine.visibility = View.GONE
         val fm = supportFragmentManager.beginTransaction()

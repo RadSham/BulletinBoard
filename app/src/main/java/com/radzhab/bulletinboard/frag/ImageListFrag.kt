@@ -62,16 +62,23 @@ class ImageListFrag(
 
         addImageItem.setOnMenuItemClickListener {
             if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
-                Toast.makeText(context, getString(R.string.max_pics_count), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.max_pics_count), Toast.LENGTH_LONG)
+                    .show()
                 return@setOnMenuItemClickListener false
             }
             val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
-            ImagePicker.launcher(activity as EditAdsActivity, imageCount)
+            ImagePicker.launcher(activity as EditAdsActivity, imageCount, false)
             true
         }
+
     }
 
     fun updateAdapter(newList: ArrayList<String>) {
         adapter.updateAdapter(newList, false)
+    }
+
+    fun setSingleImage(uri: String, pos : Int) {
+        adapter.mainArray[pos] = uri
+        adapter.notifyDataSetChanged()
     }
 }
