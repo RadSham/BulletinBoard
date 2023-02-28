@@ -5,6 +5,9 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.exifinterface.media.ExifInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 
 object ImageManager {
@@ -42,12 +45,10 @@ object ImageManager {
         return rotation
     }
 
-    fun imageResize(context: Context, uris: List<Uri>) : ArrayList<List<Int>> {
+    suspend fun imageResize(context: Context, uris: List<Uri>) = withContext(Dispatchers.IO) {
         val tempList = arrayListOf<List<Int>>()
         for (n in uris.indices) {
             val size = getImageSize(context, uris[n])
-            Log.d("MyLog", "size w ${size[WIDTH]} h ${size[HEIGHT]}")
-
             val imageRatio = size[WIDTH].toFloat() / size[HEIGHT].toFloat()
             if (imageRatio > 1) {
                 if (size[WIDTH] > MAX_IMAGE_SIZE) {
@@ -62,9 +63,9 @@ object ImageManager {
                     tempList.add(listOf(size[WIDTH], size[HEIGHT]))
                 }
             }
-            Log.d("MyLog", "compressed size w ${tempList[n][WIDTH]} h ${tempList[n][HEIGHT]}")
         }
-        return tempList
+        delay(10000)
+        return@withContext "Done"
     }
 
 }

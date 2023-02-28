@@ -1,5 +1,6 @@
 package com.radzhab.bulletinboard.utils
 
+import android.net.Uri
 import android.util.Log
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
@@ -37,14 +38,11 @@ object ImagePicker {
                         }
                     }
                     if (edAct.chooseImageFrag == null) {
-//                        edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
-//                        val tempList = ImageManager.getImageSize(edAct, result.data[0])
-                        val tempList = ImageManager.imageResize(edAct, result.data)
-                        Log.d("MyLog", "tempList ${tempList} ${result.data[0]}")
+                        edAct.openChooseImageFrag(result.data as ArrayList<Uri>)
                     } else if (updateOneImage) {
-                        edAct.updateOneImageFrag(result.data[0].toString())
+                        edAct.updateOneImageFrag(result.data[0])
                     } else {
-                        edAct.updateChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
+                        edAct.updateChooseImageFrag(result.data as ArrayList<Uri>)
                     }
                 }
                 //use results as it.data

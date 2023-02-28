@@ -1,6 +1,8 @@
 package com.radzhab.bulletinboard.frag
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +13,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.databinding.ListImageFragBinding
+import com.radzhab.bulletinboard.utils.ImageManager
 import com.radzhab.bulletinboard.utils.ImagePicker
 import com.radzhab.bulletinboard.utils.ItemTouchMoveCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class ImageListFrag(
+
     private val fragCloseInterface: FragmentCloseInterface,
-    private val newList: ArrayList<String>
+    private val newUris: ArrayList<Uri>
 ) : Fragment() {
     lateinit var rootElement: ListImageFragBinding
     val adapter = SelectImageRvAdapter()
     private val drugCallback = ItemTouchMoveCallback(adapter)
+    private lateinit var job: Job
     val touchHelper = ItemTouchHelper(drugCallback)
 
     override fun onCreateView(
@@ -38,12 +47,17 @@ class ImageListFrag(
         touchHelper.attachToRecyclerView(rootElement.rcViewSelectImage)
         rootElement.rcViewSelectImage.layoutManager = LinearLayoutManager(activity)
         rootElement.rcViewSelectImage.adapter = adapter
-        adapter.updateAdapter(newList, true)
+        job = CoroutineScope(Dispatchers.Main).launch {
+            val text = ImageManager.imageResize(activity as EditAdsActivity, newUris)
+            Log.d("MyLog", "result text at coroutine $text")
+        }
+        //        adapter.updateAdapter(newList, true)
     }
 
     override fun onDetach() {
         super.onDetach()
         fragCloseInterface.onFragClose(adapter.mainArray)
+        job.cancel()
     }
 
     private fun setUpToolbar() {
@@ -80,5 +94,9 @@ class ImageListFrag(
     fun setSingleImage(uri: String, pos : Int) {
         adapter.mainArray[pos] = uri
         adapter.notifyDataSetChanged()
+    }
+
+    fun imageResize(){
+
     }
 }
