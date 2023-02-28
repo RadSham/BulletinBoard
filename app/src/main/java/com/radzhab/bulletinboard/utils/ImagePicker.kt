@@ -38,8 +38,9 @@ object ImagePicker {
                     }
                     if (edAct.chooseImageFrag == null) {
 //                        edAct.openChooseImageFrag(result.data.map { it.toString() } as ArrayList<String>)
-                        val tempList = ImageManager.getImageSize(edAct, result.data[0])
-                        Log.d("MyLog", "tempList $tempList ${result.data[0]}")
+//                        val tempList = ImageManager.getImageSize(edAct, result.data[0])
+                        val tempList = ImageManager.imageResize(edAct, result.data)
+                        Log.d("MyLog", "tempList ${tempList} ${result.data[0]}")
                     } else if (updateOneImage) {
                         edAct.updateOneImageFrag(result.data[0].toString())
                     } else {
