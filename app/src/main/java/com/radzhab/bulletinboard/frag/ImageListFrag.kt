@@ -51,7 +51,7 @@ class ImageListFrag(
             val text = ImageManager.imageResize(activity as EditAdsActivity, newUris)
             Log.d("MyLog", "result text at coroutine $text")
         }
-        //        adapter.updateAdapter(newList, true)
+        adapter.updateAdapter(newUris, true)
     }
 
     override fun onDetach() {
@@ -87,16 +87,16 @@ class ImageListFrag(
 
     }
 
-    fun updateAdapter(newList: ArrayList<String>) {
+    fun updateAdapter(newList: ArrayList<Uri>) {
         adapter.updateAdapter(newList, false)
     }
 
-    fun setSingleImage(uri: String, pos : Int) {
+    fun setSingleImage(uri: Uri, pos: Int) {
         adapter.mainArray[pos] = uri
         adapter.notifyDataSetChanged()
     }
 
-    fun imageResize(){
+    fun imageResize() {
 
     }
 }

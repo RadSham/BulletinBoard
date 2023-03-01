@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.radzhab.bulletinboard.R
 
 class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageHolder>() {
-    val mainArray = ArrayList<String>()
+    val mainArray = ArrayList<Uri>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.image_adapter_item, parent, false)
@@ -26,13 +26,13 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageHolder>() {
 
     class ImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         lateinit var imItem: ImageView
-        fun setData(uri: String) {
+        fun setData(uri: Uri) {
             imItem = itemView.findViewById(R.id.imItem)
-            imItem.setImageURI(Uri.parse(uri))
+            imItem.setImageURI(uri)
         }
     }
 
-    fun update(newList: ArrayList<String>){
+    fun update(newList: ArrayList<Uri>){
         mainArray.clear()
         mainArray.addAll(newList)
         notifyDataSetChanged()

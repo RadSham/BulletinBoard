@@ -17,7 +17,7 @@ import com.radzhab.bulletinboard.utils.ItemTouchMoveCallback
 class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHolder>(),
     ItemTouchMoveCallback.ItemTouchAdapter {
 
-    val mainArray = ArrayList<String>()
+    val mainArray = ArrayList<Uri>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
         val view = LayoutInflater.from(parent.context)
@@ -50,11 +50,11 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
         lateinit var image: ImageView
         lateinit var imEditImage: ImageButton
         lateinit var imDeleteImage: ImageButton
-        fun setData(item: String) {
+        fun setData(item: Uri) {
             tvTitle = itemView.findViewById(R.id.tvTitle)
             image = itemView.findViewById(R.id.imageContent)
             tvTitle.text = context.resources.getStringArray(R.array.title_array)[adapterPosition]
-            image.setImageURI(Uri.parse(item))
+            image.setImageURI(item)
 
             imEditImage = itemView.findViewById(R.id.imEditImage)
             imEditImage.setOnClickListener {
@@ -75,7 +75,7 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
         }
     }
 
-    fun updateAdapter(newList: List<String>, needClear: Boolean) {
+    fun updateAdapter(newList: ArrayList<Uri>, needClear: Boolean) {
         if (needClear) mainArray.clear()
         mainArray.addAll(newList)
         notifyDataSetChanged()

@@ -51,7 +51,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             if (imageAdapter.mainArray.size < 1) {
                 ImagePicker.launcher(this, ImagePicker.MAX_IMAGE_COUNT, false)
             } else {
-                openChooseImageFrag(imageAdapter.mainArray.map { Uri.parse(it) } as ArrayList<Uri>)
+                openChooseImageFrag(imageAdapter.mainArray)
             }
             rootElement.scrollViewMine.visibility = View.GONE
         }
@@ -63,7 +63,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     }
 
 
-    override fun onFragClose(list: ArrayList<String>) {
+    override fun onFragClose(list: ArrayList<Uri>) {
         rootElement.scrollViewMine.visibility = View.VISIBLE
         imageAdapter.update(list)
 //        chooseImageFrag = null
@@ -78,8 +78,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun updateChooseImageFrag(newList: ArrayList<Uri>) {
-        chooseImageFrag!!.updateAdapter(newList.map { it.toString() } as ArrayList<String>)
-        chooseImageFrag = ImageListFrag(this, chooseImageFrag!!.adapter.mainArray.map { Uri.parse(it) } as ArrayList<Uri>)
+        chooseImageFrag!!.updateAdapter(newList)
+        chooseImageFrag = ImageListFrag(this, chooseImageFrag!!.adapter.mainArray)
         rootElement.scrollViewMine.visibility = View.GONE
         val fm = supportFragmentManager.beginTransaction()
         fm.replace(R.id.placeholder, chooseImageFrag!!)
@@ -87,8 +87,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     }
 
     fun updateOneImageFrag(newImage: Uri) {
-        chooseImageFrag!!.setSingleImage(newImage.toString(), editImagePosition)
-        chooseImageFrag = ImageListFrag(this, chooseImageFrag!!.adapter.mainArray.map { Uri.parse(it) } as ArrayList<Uri>)
+        chooseImageFrag!!.setSingleImage(newImage, editImagePosition)
+        chooseImageFrag = ImageListFrag(this, chooseImageFrag!!.adapter.mainArray)
         rootElement.scrollViewMine.visibility = View.GONE
         val fm = supportFragmentManager.beginTransaction()
         fm.replace(R.id.placeholder, chooseImageFrag!!)
