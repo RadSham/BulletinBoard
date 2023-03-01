@@ -1,6 +1,5 @@
 package com.radzhab.bulletinboard.utils
 
-import android.net.Uri
 import android.util.Log
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
@@ -38,11 +37,11 @@ object ImagePicker {
                         }
                     }
                     if (edAct.chooseImageFrag == null) {
-                        edAct.openChooseImageFrag(result.data as ArrayList<Uri>)
+                        edAct.openChooseImageFrag(result.data)
                     } else if (updateOneImage) {
                         edAct.updateOneImageFrag(result.data[0])
                     } else {
-                        edAct.updateChooseImageFrag(result.data as ArrayList<Uri>)
+                        edAct.updateChooseImageFrag(result.data)
                     }
                 }
                 //use results as it.data

@@ -1,7 +1,7 @@
 package com.radzhab.bulletinboard.frag
 
-import android.net.Uri
+import android.graphics.Bitmap
 
 interface FragmentCloseInterface {
-    fun onFragClose(list: ArrayList<Uri>)
+    fun onFragClose(list: List<Bitmap>)
 }

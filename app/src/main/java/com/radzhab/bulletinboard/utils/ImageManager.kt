@@ -1,18 +1,18 @@
 package com.radzhab.bulletinboard.utils
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.exifinterface.media.ExifInterface
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 
 object ImageManager {
 
-    const val MAX_IMAGE_SIZE = 1000
+    private const val MAX_IMAGE_SIZE = 1000
     const val WIDTH = 0
     const val HEIGHT = 1
 
@@ -36,7 +36,6 @@ object ImageManager {
         val exif = inputStream?.let { ExifInterface(it) }
         val orientation =
             exif?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        Log.d("MyLog", "imageRotation $orientation")
         rotation =
             if (orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270)
                 90
@@ -45,27 +44,37 @@ object ImageManager {
         return rotation
     }
 
-    suspend fun imageResize(context: Context, uris: List<Uri>) = withContext(Dispatchers.IO) {
-        val tempList = arrayListOf<List<Int>>()
-        for (n in uris.indices) {
-            val size = getImageSize(context, uris[n])
-            val imageRatio = size[WIDTH].toFloat() / size[HEIGHT].toFloat()
-            if (imageRatio > 1) {
-                if (size[WIDTH] > MAX_IMAGE_SIZE) {
-                    tempList.add(listOf(MAX_IMAGE_SIZE, (MAX_IMAGE_SIZE / imageRatio).toInt()))
+    suspend fun imageResize(context: Context, uris: List<Uri>): List<Bitmap> =
+        withContext(Dispatchers.IO) {
+            val tempList = arrayListOf<List<Int>>()
+            val bitmapList = ArrayList<Bitmap>()
+            for (n in uris.indices) {
+                val size = getImageSize(context, uris[n])
+                val imageRatio = size[WIDTH].toFloat() / size[HEIGHT].toFloat()
+                if (imageRatio > 1) {
+                    if (size[WIDTH] > MAX_IMAGE_SIZE) {
+                        tempList.add(listOf(MAX_IMAGE_SIZE, (MAX_IMAGE_SIZE / imageRatio).toInt()))
+                    } else {
+                        tempList.add(listOf(size[WIDTH], size[HEIGHT]))
+                    }
                 } else {
-                    tempList.add(listOf(size[WIDTH], size[HEIGHT]))
-                }
-            } else {
-                if (size[HEIGHT] > MAX_IMAGE_SIZE) {
-                    tempList.add(listOf((MAX_IMAGE_SIZE * imageRatio).toInt(), MAX_IMAGE_SIZE))
-                } else {
-                    tempList.add(listOf(size[WIDTH], size[HEIGHT]))
+                    if (size[HEIGHT] > MAX_IMAGE_SIZE) {
+                        tempList.add(listOf((MAX_IMAGE_SIZE * imageRatio).toInt(), MAX_IMAGE_SIZE))
+                    } else {
+                        tempList.add(listOf(size[WIDTH], size[HEIGHT]))
+                    }
                 }
             }
+            for (i in uris.indices) {
+                val e = kotlin.runCatching {
+                    bitmapList.add(
+                        Picasso.get().load(uris[i].toString())
+                            .resize(tempList[i][WIDTH], tempList[i][HEIGHT]).get()
+                    )
+                }
+            }
+
+            return@withContext bitmapList
         }
-        delay(10000)
-        return@withContext "Done"
-    }
 
 }

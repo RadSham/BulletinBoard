@@ -1,8 +1,8 @@
 package com.radzhab.bulletinboard.frag
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,12 +24,12 @@ import kotlinx.coroutines.launch
 class ImageListFrag(
 
     private val fragCloseInterface: FragmentCloseInterface,
-    private val newUris: ArrayList<Uri>
+    private val newUris: List<Uri>?
 ) : Fragment() {
     lateinit var rootElement: ListImageFragBinding
     val adapter = SelectImageRvAdapter()
     private val drugCallback = ItemTouchMoveCallback(adapter)
-    private lateinit var job: Job
+    private var job: Job? = null
     val touchHelper = ItemTouchHelper(drugCallback)
 
     override fun onCreateView(
@@ -47,17 +47,22 @@ class ImageListFrag(
         touchHelper.attachToRecyclerView(rootElement.rcViewSelectImage)
         rootElement.rcViewSelectImage.layoutManager = LinearLayoutManager(activity)
         rootElement.rcViewSelectImage.adapter = adapter
-        job = CoroutineScope(Dispatchers.Main).launch {
-            val text = ImageManager.imageResize(activity as EditAdsActivity, newUris)
-            Log.d("MyLog", "result text at coroutine $text")
+        if (newUris != null) {
+            job = CoroutineScope(Dispatchers.Main).launch {
+                val bitmapList = ImageManager.imageResize(activity as EditAdsActivity, newUris)
+                adapter.updateAdapter(bitmapList, true)
+            }
         }
-        adapter.updateAdapter(newUris, true)
+    }
+
+    fun updateAdapterFromEdit(bitmapList: List<Bitmap>) {
+        adapter.updateAdapter(bitmapList, true)
     }
 
     override fun onDetach() {
         super.onDetach()
         fragCloseInterface.onFragClose(adapter.mainArray)
-        job.cancel()
+        job?.cancel()
     }
 
     private fun setUpToolbar() {
@@ -87,13 +92,20 @@ class ImageListFrag(
 
     }
 
-    fun updateAdapter(newList: ArrayList<Uri>) {
-        adapter.updateAdapter(newList, false)
+    fun updateAdapter(list: List<Uri>) {
+        job = CoroutineScope(Dispatchers.Main).launch {
+            val bitmapList = ImageManager.imageResize(activity as EditAdsActivity, list)
+            adapter.updateAdapter(bitmapList, false)
+        }
     }
 
     fun setSingleImage(uri: Uri, pos: Int) {
-        adapter.mainArray[pos] = uri
-        adapter.notifyDataSetChanged()
+        job = CoroutineScope(Dispatchers.Main).launch {
+            val bitmapList = ImageManager.imageResize(activity as EditAdsActivity, listOf(uri))
+            adapter.mainArray[pos] = bitmapList[0]
+            adapter.notifyDataSetChanged()
+        }
+
     }
 
     fun imageResize() {

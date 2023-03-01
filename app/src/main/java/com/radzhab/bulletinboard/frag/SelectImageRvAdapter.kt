@@ -1,7 +1,7 @@
 package com.radzhab.bulletinboard.frag
 
 import android.content.Context
-import android.net.Uri
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ import com.radzhab.bulletinboard.utils.ItemTouchMoveCallback
 class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHolder>(),
     ItemTouchMoveCallback.ItemTouchAdapter {
 
-    val mainArray = ArrayList<Uri>()
+    val mainArray = ArrayList<Bitmap>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
         val view = LayoutInflater.from(parent.context)
@@ -50,11 +50,11 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
         lateinit var image: ImageView
         lateinit var imEditImage: ImageButton
         lateinit var imDeleteImage: ImageButton
-        fun setData(item: Uri) {
+        fun setData(bitmap: Bitmap) {
             tvTitle = itemView.findViewById(R.id.tvTitle)
             image = itemView.findViewById(R.id.imageContent)
             tvTitle.text = context.resources.getStringArray(R.array.title_array)[adapterPosition]
-            image.setImageURI(item)
+            image.setImageBitmap(bitmap)
 
             imEditImage = itemView.findViewById(R.id.imEditImage)
             imEditImage.setOnClickListener {
@@ -75,7 +75,7 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
         }
     }
 
-    fun updateAdapter(newList: ArrayList<Uri>, needClear: Boolean) {
+    fun updateAdapter(newList: List<Bitmap>, needClear: Boolean) {
         if (needClear) mainArray.clear()
         mainArray.addAll(newList)
         notifyDataSetChanged()
