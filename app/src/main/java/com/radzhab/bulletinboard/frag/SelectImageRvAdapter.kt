@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.radzhab.bulletinboard.R
@@ -50,14 +51,17 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
         lateinit var image: ImageView
         lateinit var imEditImage: ImageButton
         lateinit var imDeleteImage: ImageButton
+        lateinit var pBar: ProgressBar
         fun setData(bitmap: Bitmap) {
             tvTitle = itemView.findViewById(R.id.tvTitle)
             image = itemView.findViewById(R.id.imageContent)
+            pBar = itemView.findViewById(R.id.pBar)
             tvTitle.text = context.resources.getStringArray(R.array.title_array)[adapterPosition]
             image.setImageBitmap(bitmap)
 
             imEditImage = itemView.findViewById(R.id.imEditImage)
             imEditImage.setOnClickListener {
+                pBar.visibility = View.VISIBLE
                 ImagePicker.launcher(context as EditAdsActivity, 1, true)
                 context.editImagePosition = adapterPosition
             }
@@ -70,8 +74,6 @@ class SelectImageRvAdapter : RecyclerView.Adapter<SelectImageRvAdapter.ImageHold
                 for (n in 0 until adapter.mainArray.size)
                     adapter.notifyItemChanged(n)
             }
-
-
         }
     }
 
