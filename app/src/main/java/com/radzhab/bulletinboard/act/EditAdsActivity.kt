@@ -1,7 +1,6 @@
 package com.radzhab.bulletinboard.act
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -17,8 +16,8 @@ import com.radzhab.bulletinboard.utils.ImagePicker
 
 class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
-    private val dialog = DialogSpinnerHelper()
-    private lateinit var imageAdapter: ImageAdapter
+    val dialog = DialogSpinnerHelper()
+    lateinit var imageAdapter: ImageAdapter
     var chooseImageFrag: ImageListFrag? = null
     var editImagePosition = 0
 
@@ -52,7 +51,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             if (imageAdapter.mainArray.size < 1) {
                 ImagePicker.launcher(this, ImagePicker.MAX_IMAGE_COUNT, false)
             } else {
-                openChooseImageFrag(null)
+                ImagePicker.openChooseImageFrag(this, null)
                 chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
             }
             rootElement.scrollViewMine.visibility = View.GONE
@@ -69,34 +68,6 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         rootElement.scrollViewMine.visibility = View.VISIBLE
         imageAdapter.update(list)
 //        chooseImageFrag = null
-    }
-
-    fun openChooseImageFrag(newList: List<Uri>?) {
-        chooseImageFrag = ImageListFrag(this, newList)
-        rootElement.scrollViewMine.visibility = View.GONE
-        val fm = supportFragmentManager.beginTransaction()
-        fm.replace(R.id.placeholder, chooseImageFrag!!)
-        fm.commit()
-    }
-
-    fun updateChooseImageFrag(newList: List<Uri>) {
-        chooseImageFrag = ImageListFrag(this, null)
-        chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
-        chooseImageFrag!!.updateAdapter(newList)
-        rootElement.scrollViewMine.visibility = View.GONE
-        val fm = supportFragmentManager.beginTransaction()
-        fm.replace(R.id.placeholder, chooseImageFrag!!)
-        fm.commit()
-    }
-
-    fun updateOneImageFrag(newImage: Uri) {
-        chooseImageFrag = ImageListFrag(this, null)
-        chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
-        chooseImageFrag!!.setSingleImage(newImage, editImagePosition)
-        rootElement.scrollViewMine.visibility = View.GONE
-        val fm = supportFragmentManager.beginTransaction()
-        fm.replace(R.id.placeholder, chooseImageFrag!!)
-        fm.commit()
     }
 
 }

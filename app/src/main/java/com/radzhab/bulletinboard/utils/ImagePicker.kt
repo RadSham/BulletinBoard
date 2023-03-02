@@ -1,8 +1,11 @@
 package com.radzhab.bulletinboard.utils
 
+import android.net.Uri
 import android.util.Log
+import android.view.View
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
+import com.radzhab.bulletinboard.frag.ImageListFrag
 import io.ak1.pix.helpers.PixEventCallback
 import io.ak1.pix.helpers.addPixToActivity
 import io.ak1.pix.models.Mode
@@ -37,11 +40,11 @@ object ImagePicker {
                         }
                     }
                     if (edAct.chooseImageFrag == null) {
-                        edAct.openChooseImageFrag(result.data)
+                        openChooseImageFrag(edAct, result.data)
                     } else if (updateOneImage) {
-                        edAct.updateOneImageFrag(result.data[0])
+                        updateOneImageFrag(edAct,result.data[0])
                     } else {
-                        edAct.updateChooseImageFrag(result.data)
+                        updateChooseImageFrag(edAct,result.data)
                     }
                 }
                 //use results as it.data
@@ -52,6 +55,34 @@ object ImagePicker {
             }
 
         }
+    }
+
+    fun openChooseImageFrag(edAct: EditAdsActivity, newList: List<Uri>?) {
+        edAct.chooseImageFrag = ImageListFrag(edAct, newList)
+        edAct.rootElement.scrollViewMine.visibility = View.GONE
+        val fm = edAct.supportFragmentManager.beginTransaction()
+        fm.replace(R.id.placeholder, edAct.chooseImageFrag!!)
+        fm.commit()
+    }
+
+    private fun updateChooseImageFrag(edAct: EditAdsActivity, newList: List<Uri>) {
+        edAct.chooseImageFrag = ImageListFrag(edAct, null)
+        edAct.chooseImageFrag?.updateAdapterFromEdit(edAct.imageAdapter.mainArray)
+        edAct.chooseImageFrag!!.updateAdapter(newList)
+        edAct.rootElement.scrollViewMine.visibility = View.GONE
+        val fm = edAct.supportFragmentManager.beginTransaction()
+        fm.replace(R.id.placeholder, edAct.chooseImageFrag!!)
+        fm.commit()
+    }
+
+    private fun updateOneImageFrag(edAct: EditAdsActivity, newImage: Uri) {
+        edAct.chooseImageFrag = ImageListFrag(edAct, null)
+        edAct.chooseImageFrag?.updateAdapterFromEdit(edAct.imageAdapter.mainArray)
+        edAct.chooseImageFrag!!.setSingleImage(newImage, edAct.editImagePosition)
+        edAct.rootElement.scrollViewMine.visibility = View.GONE
+        val fm = edAct.supportFragmentManager.beginTransaction()
+        fm.replace(R.id.placeholder, edAct.chooseImageFrag!!)
+        fm.commit()
     }
 
 }
