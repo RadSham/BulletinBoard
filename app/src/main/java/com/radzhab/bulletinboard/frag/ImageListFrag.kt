@@ -5,9 +5,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +15,7 @@ import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.databinding.ListImageFragBinding
 import com.radzhab.bulletinboard.dialogHelper.ProgressDialog
+import com.radzhab.bulletinboard.utils.AdapterCallback
 import com.radzhab.bulletinboard.utils.ImageManager
 import com.radzhab.bulletinboard.utils.ImagePicker
 import com.radzhab.bulletinboard.utils.ItemTouchMoveCallback
@@ -27,12 +28,13 @@ class ImageListFrag(
 
     private val fragCloseInterface: FragmentCloseInterface,
     private val newUris: List<Uri>?
-) : Fragment() {
+) : Fragment(), AdapterCallback {
     lateinit var rootElement: ListImageFragBinding
-    val adapter = SelectImageRvAdapter()
+    val adapter = SelectImageRvAdapter(this)
     private val drugCallback = ItemTouchMoveCallback(adapter)
     private var job: Job? = null
     val touchHelper = ItemTouchHelper(drugCallback)
+    private var addImageItem:MenuItem? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +54,10 @@ class ImageListFrag(
         if (newUris != null) resizeSelectedImages(newUris, true)
     }
 
+    override fun onItemDelete() {
+        addImageItem?.isVisible = true
+    }
+
     fun updateAdapterFromEdit(bitmapList: List<Bitmap>) {
         adapter.updateAdapter(bitmapList, true)
     }
@@ -63,18 +69,22 @@ class ImageListFrag(
     }
 
     private fun resizeSelectedImages(list: List<Uri>, needClear: Boolean) {
+
         job = CoroutineScope(Dispatchers.Main).launch {
             val dialog = ProgressDialog.createProgressDialog(activity as Activity)
             val bitmapList = ImageManager.imageResize(activity as EditAdsActivity, list)
             dialog.dismiss()
             adapter.updateAdapter(bitmapList, needClear)
+            if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
+                addImageItem?.isVisible = false
+            }
         }
     }
 
     private fun setUpToolbar() {
         rootElement.tbSelectedImages.inflateMenu(R.menu.menu_choose_image)
         val deleteItem = rootElement.tbSelectedImages.menu.findItem(R.id.id_delete_image)
-        val addImageItem = rootElement.tbSelectedImages.menu.findItem(R.id.id_add_image)
+        addImageItem = rootElement.tbSelectedImages.menu.findItem(R.id.id_add_image)
 
         rootElement.tbSelectedImages.setNavigationOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
@@ -85,12 +95,12 @@ class ImageListFrag(
             true
         }
 
-        addImageItem.setOnMenuItemClickListener {
-            if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
+        addImageItem?.setOnMenuItemClickListener {
+            /*if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
                 Toast.makeText(context, getString(R.string.max_pics_count), Toast.LENGTH_LONG)
                     .show()
                 return@setOnMenuItemClickListener false
-            }
+            }*/
             val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
             ImagePicker.launcher(activity as EditAdsActivity, imageCount, false)
             true
