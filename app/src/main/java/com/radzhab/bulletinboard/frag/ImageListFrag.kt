@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.radzhab.bulletinboard.R
@@ -28,30 +27,34 @@ class ImageListFrag(
 
     private val fragCloseInterface: FragmentCloseInterface,
     private val newUris: List<Uri>?
-) : Fragment(), AdapterCallback {
-    lateinit var rootElement: ListImageFragBinding
+) : BaseAdsFrag(), AdapterCallback {
     val adapter = SelectImageRvAdapter(this)
     private val drugCallback = ItemTouchMoveCallback(adapter)
     private var job: Job? = null
     val touchHelper = ItemTouchHelper(drugCallback)
     private var addImageItem:MenuItem? = null
+    lateinit var binding: ListImageFragBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        rootElement = ListImageFragBinding.inflate(inflater)
-        return rootElement.root
+    ): View? {
+        binding = ListImageFragBinding.inflate(layoutInflater)
+        adView = binding.adView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar()
-        touchHelper.attachToRecyclerView(rootElement.rcViewSelectImage)
-        rootElement.rcViewSelectImage.layoutManager = LinearLayoutManager(activity)
-        rootElement.rcViewSelectImage.adapter = adapter
-        if (newUris != null) resizeSelectedImages(newUris, true)
+        binding.apply {
+            touchHelper.attachToRecyclerView(rcViewSelectImage)
+            rcViewSelectImage.layoutManager = LinearLayoutManager(activity)
+            rcViewSelectImage.adapter = adapter
+            if (newUris != null) resizeSelectedImages(newUris, true)
+        }
     }
 
     override fun onItemDelete() {
@@ -68,6 +71,12 @@ class ImageListFrag(
         job?.cancel()
     }
 
+    override fun onClose() {
+        super.onClose()
+        activity?.supportFragmentManager?.beginTransaction()?.remove(this@ImageListFrag)
+            ?.commit()
+    }
+
     private fun resizeSelectedImages(list: List<Uri>, needClear: Boolean) {
 
         job = CoroutineScope(Dispatchers.Main).launch {
@@ -82,28 +91,33 @@ class ImageListFrag(
     }
 
     private fun setUpToolbar() {
-        rootElement.tbSelectedImages.inflateMenu(R.menu.menu_choose_image)
-        val deleteItem = rootElement.tbSelectedImages.menu.findItem(R.id.id_delete_image)
-        addImageItem = rootElement.tbSelectedImages.menu.findItem(R.id.id_add_image)
 
-        rootElement.tbSelectedImages.setNavigationOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
-        }
+        binding.apply {
+            tbSelectedImages.inflateMenu(R.menu.menu_choose_image)
+            val deleteItem = tbSelectedImages.menu.findItem(R.id.id_delete_image)
+            addImageItem = tbSelectedImages.menu.findItem(R.id.id_add_image)
 
-        deleteItem.setOnMenuItemClickListener {
-            adapter.updateAdapter(ArrayList(), true)
-            true
-        }
+            tbSelectedImages.setNavigationOnClickListener {
+                showInterAd()
+            }
 
-        addImageItem?.setOnMenuItemClickListener {
-            /*if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
+
+
+            deleteItem.setOnMenuItemClickListener {
+                adapter.updateAdapter(ArrayList(), true)
+                true
+            }
+
+            addImageItem?.setOnMenuItemClickListener {
+                /*if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
                 Toast.makeText(context, getString(R.string.max_pics_count), Toast.LENGTH_LONG)
                     .show()
                 return@setOnMenuItemClickListener false
             }*/
-            val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
-            ImagePicker.launcher(activity as EditAdsActivity, imageCount, false)
-            true
+                val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
+                ImagePicker.launcher(activity as EditAdsActivity, imageCount, false)
+                true
+            }
         }
 
     }

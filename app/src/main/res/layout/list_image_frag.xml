@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     android:rotationX="0">
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:adSize="BANNER"
+        app:adUnitId="@string/ad_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tbSelectedImages" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcViewSelectImage"
         android:layout_width="match_parent"
@@ -12,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tbSelectedImages" />
+        app:layout_constraintTop_toBottomOf="@+id/adView" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tbSelectedImages"
@@ -21,11 +31,9 @@
         android:background="@color/white"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ActionBarCustom"
-        app:layout_constraintBottom_toTopOf="@+id/rcViewSelectImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_editor_absoluteX="1dp"
         app:navigationIcon="?attr/homeAsUpIndicator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
