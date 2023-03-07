@@ -2,11 +2,13 @@ package com.radzhab.bulletinboard.act
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.adaptors.ImageAdapter
+import com.radzhab.bulletinboard.database.DbManager
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
 import com.radzhab.bulletinboard.frag.FragmentCloseInterface
@@ -61,6 +63,12 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
             }
             rootElement.scrollViewMine.visibility = View.GONE
+        }
+
+        rootElement.btPublish.setOnClickListener {
+            Log.d("MyLog","in rootElement.btPublish.setOnClickListener")
+            val dbManager = DbManager()
+            dbManager.publishAd()
         }
     }
 
