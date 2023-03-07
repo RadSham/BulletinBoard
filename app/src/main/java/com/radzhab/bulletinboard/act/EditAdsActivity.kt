@@ -46,6 +46,12 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                     .show()
             }
         }
+        //onClick tvSelectCategory
+        rootElement.tvSelectCategory.setOnClickListener {
+                val listCategories = resources.getStringArray(R.array.category).toMutableList() as ArrayList
+                dialog.showSpinnerDialog(this, listCategories, rootElement.tvSelectCategory)
+
+        }
         //onClick GetImage
         rootElement.btGetImage.setOnClickListener {
             if (imageAdapter.mainArray.size < 1) {
