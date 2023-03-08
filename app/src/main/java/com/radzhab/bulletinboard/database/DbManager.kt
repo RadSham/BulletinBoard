@@ -24,9 +24,10 @@ class DbManager {
     fun readDaraFromDb() {
         db.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                val adArray = ArrayList<Ad>()
                 for (item in snapshot.children) {
                     val ad = item.children.iterator().next().child("ad").getValue(Ad::class.java)
-                    Log.d("MyLog", "${ad}")
+                    if (ad != null) adArray.add(ad)
                 }
             }
 
