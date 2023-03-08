@@ -9,7 +9,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.radzhab.bulletinboard.data.Ad
 
-class DbManager {
+class DbManager(val readDataCallback: ReadDataCallback?) {
     val db = Firebase.database.getReference("main")
     val auth = Firebase.auth
 
@@ -29,11 +29,11 @@ class DbManager {
                     val ad = item.children.iterator().next().child("ad").getValue(Ad::class.java)
                     if (ad != null) adArray.add(ad)
                 }
+                readDataCallback?.readData(adArray)
             }
 
             override fun onCancelled(error: DatabaseError) {
             }
-
         })
     }
 }

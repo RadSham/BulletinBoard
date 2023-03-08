@@ -10,25 +10,30 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.radzhab.bulletinboard.act.EditAdsActivity
+import com.radzhab.bulletinboard.adaptors.AdsRcAdapter
+import com.radzhab.bulletinboard.data.Ad
 import com.radzhab.bulletinboard.database.DbManager
+import com.radzhab.bulletinboard.database.ReadDataCallback
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
 import com.radzhab.bulletinboard.dialogHelper.GoogleAccConst.GOOGLE_SIGN_IN_REQUEST_CODE
 
-class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, ReadDataCallback {
 
     private lateinit var tvAccount: TextView
     private lateinit var rootElement: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
     val myAuth = FirebaseAuth.getInstance()
-    val dbManager = DbManager()
+    val dbManager = DbManager(this)
+    val adapter = AdsRcAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +41,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         val view = rootElement.root
         setContentView(view)
         init()
+        initRecyclerView()
         dbManager.readDaraFromDb()
     }
 
@@ -91,6 +97,13 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         tvAccount = rootElement.navView.getHeaderView(0).findViewById(R.id.tvAccountEmail)
     }
 
+    private fun initRecyclerView() {
+        rootElement.apply {
+            mainContent.rcView.layoutManager = LinearLayoutManager(this@MainActivity)
+            mainContent.rcView.adapter = adapter
+        }
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.id_my_adds -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG)
@@ -119,6 +132,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
     fun uiUpdate(user: FirebaseUser?) {
         tvAccount.text = if (user == null) resources.getString(R.string.not_reg) else user.email
 
+    }
+
+    override fun readData(list: List<Ad>) {
+        adapter.update(list)
     }
 
 }
