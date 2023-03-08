@@ -16,6 +16,7 @@ import com.google.android.material.navigation.NavigationView.OnNavigationItemSel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.radzhab.bulletinboard.act.EditAdsActivity
+import com.radzhab.bulletinboard.database.DbManager
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
     private lateinit var rootElement: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
     val myAuth = FirebaseAuth.getInstance()
+    val dbManager = DbManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         val view = rootElement.root
         setContentView(view)
         init()
+        dbManager.readDaraFromDb()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
