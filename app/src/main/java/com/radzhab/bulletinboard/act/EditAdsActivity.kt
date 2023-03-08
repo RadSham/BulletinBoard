@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.adaptors.ImageAdapter
+import com.radzhab.bulletinboard.data.Ad
 import com.radzhab.bulletinboard.database.DbManager
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
@@ -22,6 +23,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var imageAdapter: ImageAdapter
     var chooseImageFrag: ImageListFrag? = null
     var editImagePosition = 0
+    private val dbManager = DbManager()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +53,9 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         }
         //onClick tvSelectCategory
         rootElement.tvSelectCategory.setOnClickListener {
-                val listCategories = resources.getStringArray(R.array.category).toMutableList() as ArrayList
-                dialog.showSpinnerDialog(this, listCategories, rootElement.tvSelectCategory)
+            val listCategories =
+                resources.getStringArray(R.array.category).toMutableList() as ArrayList
+            dialog.showSpinnerDialog(this, listCategories, rootElement.tvSelectCategory)
 
         }
         //onClick GetImage
@@ -66,10 +70,27 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         }
 
         rootElement.btPublish.setOnClickListener {
-            Log.d("MyLog","in rootElement.btPublish.setOnClickListener")
-            val dbManager = DbManager()
-            dbManager.publishAd()
+            Log.d("MyLog", "in rootElement.btPublish.setOnClickListener")
+            dbManager.publishAd(fillAd())
         }
+    }
+
+    private fun fillAd(): Ad {
+        val ad: Ad
+        rootElement.apply {
+            ad = Ad(
+                tvSelectCountry.text.toString(),
+                tvSelectCity.text.toString(),
+                edTelephone.text.toString(),
+                edIndex.text.toString(),
+                checkBoxWithSend.toString(),
+                tvSelectCategory.text.toString(),
+                edPrice.text.toString(),
+                edDescription.text.toString(),
+                dbManager.db.push().key
+            )
+        }
+        return ad
     }
 
     private fun init() {
