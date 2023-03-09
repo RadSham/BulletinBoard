@@ -9,7 +9,6 @@ import com.google.firebase.auth.*
 import com.radzhab.bulletinboard.MainActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.constants.FirebaseAuthConstants
-import com.radzhab.bulletinboard.dialogHelper.GoogleAccConst.GOOGLE_SIGN_IN_REQUEST_CODE
 
 class AccountHelper(act: MainActivity) {
     private val act = act
@@ -132,7 +131,7 @@ class AccountHelper(act: MainActivity) {
     fun signInWithGoogle() {
         signInClient = getSignInClient()
         val intent = signInClient.signInIntent
-        act.startActivityForResult(intent, GOOGLE_SIGN_IN_REQUEST_CODE)
+        act.startForResult.launch(intent)
     }
 
     fun signOutGoogle() {

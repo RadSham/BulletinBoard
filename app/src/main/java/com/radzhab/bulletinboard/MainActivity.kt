@@ -1,14 +1,17 @@
 package com.radzhab.bulletinboard
 
+import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -24,7 +27,6 @@ import com.radzhab.bulletinboard.database.ReadDataCallback
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
-import com.radzhab.bulletinboard.dialogHelper.GoogleAccConst.GOOGLE_SIGN_IN_REQUEST_CODE
 
 class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, ReadDataCallback {
 
@@ -53,28 +55,26 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, Read
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.id_new_ads) {
             val i = Intent(this, EditAdsActivity::class.java)
-            startActivity(i)
+            startForResult.launch(i)
         }
         return super.onOptionsItemSelected(item)
     }
 
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
-
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                if (account != null) {
-                    dialogHelper.accHelper.signInFirebaseWithGoogle(account.idToken.toString())
+    val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    if (account != null) {
+                        dialogHelper.accHelper.signInFirebaseWithGoogle(account.idToken.toString())
+                    }
+                } catch (e: ApiException) {
+                    Log.d("MyLog", "Api error : ${e.message}")
                 }
-            } catch (e: ApiException) {
-                Log.d("MyLog", "Api error : ${e.message}")
             }
         }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
 
     override fun onStart() {
         super.onStart()
