@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/placeholder"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".act.EditAdsActivity">
 
     <ScrollView
@@ -353,7 +353,7 @@
             <Button
                 android:id="@+id/btPublish"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="@color/white"
                 android:text="@string/publish"
