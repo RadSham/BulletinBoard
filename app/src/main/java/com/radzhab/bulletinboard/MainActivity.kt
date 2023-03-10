@@ -17,8 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.adaptors.AdsRcAdapter
 import com.radzhab.bulletinboard.data.Ad
@@ -33,9 +34,9 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, Read
     private lateinit var tvAccount: TextView
     private lateinit var rootElement: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
-    val myAuth = FirebaseAuth.getInstance()
+    val myAuth = Firebase.auth
     val dbManager = DbManager(this)
-    val adapter = AdsRcAdapter()
+    val adapter = AdsRcAdapter(myAuth)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
