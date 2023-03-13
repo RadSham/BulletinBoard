@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
@@ -28,7 +27,7 @@ import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
 import com.radzhab.bulletinboard.viewmodel.FirebaseViewModel
 
-class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener{
+class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
 
     private lateinit var tvAccount: TextView
     private lateinit var rootElement: ActivityMainBinding
@@ -46,20 +45,24 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener{
         initRecyclerView()
         initViewModel()
         firebaseViewModel.loadAllAds()
+        buttonMenuOnClick()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onResume() {
+        super.onResume()
+        rootElement.mainContent.bNavView.selectedItemId = R.id.id_home
+    }
+
+   /* override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
-    }
+    }*/
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.id_new_ads) {
-            val i = Intent(this, EditAdsActivity::class.java)
-            startForResult.launch(i)
         }
         return super.onOptionsItemSelected(item)
-    }
+    }*/
 
     val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener{
         uiUpdate(myAuth.currentUser)
     }
 
-    private fun initViewModel(){
+    private fun initViewModel() {
         firebaseViewModel.liveAdsData.observe(this) {
             adapter.update(it)
         }
@@ -102,6 +105,34 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener{
         toggle.syncState()
         rootElement.navView.setNavigationItemSelectedListener(this)
         tvAccount = rootElement.navView.getHeaderView(0).findViewById(R.id.tvAccountEmail)
+    }
+
+    private fun buttonMenuOnClick() = with(rootElement) {
+        mainContent.bNavView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.id_new_ad -> {
+                    val i = Intent(this@MainActivity, EditAdsActivity::class.java)
+                    startForResult.launch(i)
+                    true
+                }
+                R.id.id_my_ads -> {
+                    Toast.makeText(this@MainActivity, "MyAds", Toast.LENGTH_LONG)
+                        .show()
+                    true
+                }
+                R.id.id_favs -> {
+                    Toast.makeText(this@MainActivity, "Favs", Toast.LENGTH_LONG)
+                        .show()
+                    true
+                }
+                R.id.id_home -> {
+                    Toast.makeText(this@MainActivity, "Home", Toast.LENGTH_LONG)
+                        .show()
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     private fun initRecyclerView() {
