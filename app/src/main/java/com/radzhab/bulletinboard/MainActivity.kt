@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -22,21 +23,19 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.adaptors.AdsRcAdapter
-import com.radzhab.bulletinboard.data.Ad
-import com.radzhab.bulletinboard.database.DbManager
-import com.radzhab.bulletinboard.database.ReadDataCallback
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
+import com.radzhab.bulletinboard.viewmodel.FirebaseViewModel
 
-class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, ReadDataCallback {
+class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener{
 
     private lateinit var tvAccount: TextView
     private lateinit var rootElement: ActivityMainBinding
     private val dialogHelper = DialogHelper(this)
     val myAuth = Firebase.auth
-    val dbManager = DbManager(this)
     val adapter = AdsRcAdapter(myAuth)
+    private val firebaseViewModel: FirebaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +44,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, Read
         setContentView(view)
         init()
         initRecyclerView()
-        dbManager.readDaraFromDb()
+        initViewModel()
+        firebaseViewModel.loadAllAds()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -80,6 +80,12 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, Read
     override fun onStart() {
         super.onStart()
         uiUpdate(myAuth.currentUser)
+    }
+
+    private fun initViewModel(){
+        firebaseViewModel.liveAdsData.observe(this) {
+            adapter.update(it)
+        }
     }
 
     private fun init() {
@@ -135,8 +141,5 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener, Read
 
     }
 
-    override fun readData(list: List<Ad>) {
-        adapter.update(list)
-    }
 
 }

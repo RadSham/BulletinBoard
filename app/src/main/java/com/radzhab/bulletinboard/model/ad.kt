@@ -1,4 +1,4 @@
-package com.radzhab.bulletinboard.data
+package com.radzhab.bulletinboard.model
 
 data class Ad(
     val country: String? = null,

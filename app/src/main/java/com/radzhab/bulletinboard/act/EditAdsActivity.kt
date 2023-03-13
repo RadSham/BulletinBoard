@@ -8,8 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.adaptors.ImageAdapter
-import com.radzhab.bulletinboard.data.Ad
-import com.radzhab.bulletinboard.database.DbManager
+import com.radzhab.bulletinboard.model.Ad
+import com.radzhab.bulletinboard.model.DbManager
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
 import com.radzhab.bulletinboard.frag.FragmentCloseInterface
@@ -23,7 +23,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var imageAdapter: ImageAdapter
     var chooseImageFrag: ImageListFrag? = null
     var editImagePosition = 0
-    private val dbManager = DbManager(null)
+    private val dbManager = DbManager()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

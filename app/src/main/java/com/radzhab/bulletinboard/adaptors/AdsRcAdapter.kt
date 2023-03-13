@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.radzhab.bulletinboard.data.Ad
+import com.radzhab.bulletinboard.model.Ad
 import com.radzhab.bulletinboard.databinding.AdListItemBinding
 
 class AdsRcAdapter(val auth: FirebaseAuth) : RecyclerView.Adapter<AdsRcAdapter.AdHolder>() {
