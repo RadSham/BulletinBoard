@@ -116,8 +116,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
                     true
                 }
                 R.id.id_my_ads -> {
-                    Toast.makeText(this@MainActivity, "MyAds", Toast.LENGTH_LONG)
-                        .show()
+                    firebaseViewModel.loadMyAds()
+                    mainContent.toolbar.title = getString(R.string.ad_my_adds)
                     true
                 }
                 R.id.id_favs -> {
@@ -126,8 +126,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
                     true
                 }
                 R.id.id_home -> {
-                    Toast.makeText(this@MainActivity, "Home", Toast.LENGTH_LONG)
-                        .show()
+                    firebaseViewModel.loadAllAds()
+                    mainContent.toolbar.title = getString(R.string.def)
                     true
                 }
                 else -> false
