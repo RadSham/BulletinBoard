@@ -12,4 +12,4 @@ data class Ad(
     val description: String? = null,
     val key: String? = null,
     val uid: String? = null
-)
+) : java.io.Serializable

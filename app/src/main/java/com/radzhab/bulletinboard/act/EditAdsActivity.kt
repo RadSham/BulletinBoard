@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.radzhab.bulletinboard.MainActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.adaptors.ImageAdapter
 import com.radzhab.bulletinboard.model.Ad
@@ -32,6 +33,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         val view = rootElement.root
         setContentView(view)
         init()
+        checkEditState()
+
         //onClick tvSelectCountry
         rootElement.tvSelectCountry.setOnClickListener {
             val listCountries = CityHelper.getAllCountries(this)
@@ -73,6 +76,29 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             Log.d("MyLog", "in rootElement.btPublish.setOnClickListener")
             dbManager.publishAd(fillAd())
         }
+    }
+
+    private fun fillViews(ad: Ad) = with(rootElement) {
+        tvSelectCountry.text = ad.country
+        tvSelectCity.text = ad.city
+        edTelephone.setText(ad.telephone)
+        edIndex.setText(ad.index)
+        checkBoxWithSend.isChecked = ad.withSent.toBoolean()
+        tvSelectCategory.text = ad.category
+        edTitle.setText(ad.title)
+        edPrice.setText(ad.price)
+        edDescription.setText(ad.description)
+    }
+
+    private fun checkEditState() {
+        if (isEditState()) {
+            @Suppress("DEPRECATION")
+            fillViews(intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad)
+        }
+    }
+
+    private fun isEditState(): Boolean {
+        return intent.getBooleanExtra(MainActivity.EDIT_STATE, false)
     }
 
     private fun fillAd(): Ad {
