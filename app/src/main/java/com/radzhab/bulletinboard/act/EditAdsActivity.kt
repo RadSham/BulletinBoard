@@ -23,9 +23,11 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     val dialog = DialogSpinnerHelper()
     lateinit var imageAdapter: ImageAdapter
     var chooseImageFrag: ImageListFrag? = null
-    var editImagePosition = 0
     private val dbManager = DbManager()
 
+    var editImagePosition = 0
+    private var isEditState: Boolean = false
+    private var ad: Ad? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 rootElement.tvSelectCity.text = getString(R.string.select_city)
             }
         }
+
         //onClick tvSelectCity
         rootElement.tvSelectCity.setOnClickListener {
             val selectedCountry = rootElement.tvSelectCountry.text.toString()
@@ -74,31 +77,21 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
 
         rootElement.btPublish.setOnClickListener {
             Log.d("MyLog", "in rootElement.btPublish.setOnClickListener")
-            dbManager.publishAd(fillAd())
+            val adTemp = fillAd()
+            if (isEditState) {
+                dbManager.publishAd(adTemp.copy(key = ad?.key), onPublishFinish())
+            } else {
+                dbManager.publishAd(adTemp, onPublishFinish())
+            }
         }
     }
 
-    private fun fillViews(ad: Ad) = with(rootElement) {
-        tvSelectCountry.text = ad.country
-        tvSelectCity.text = ad.city
-        edTelephone.setText(ad.telephone)
-        edIndex.setText(ad.index)
-        checkBoxWithSend.isChecked = ad.withSent.toBoolean()
-        tvSelectCategory.text = ad.category
-        edTitle.setText(ad.title)
-        edPrice.setText(ad.price)
-        edDescription.setText(ad.description)
-    }
-
-    private fun checkEditState() {
-        if (isEditState()) {
-            @Suppress("DEPRECATION")
-            fillViews(intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad)
+    private fun onPublishFinish(): DbManager.FinishWorkListener {
+        return object : DbManager.FinishWorkListener {
+            override fun onFinish() {
+                finish()
+            }
         }
-    }
-
-    private fun isEditState(): Boolean {
-        return intent.getBooleanExtra(MainActivity.EDIT_STATE, false)
     }
 
     private fun fillAd(): Ad {
@@ -120,6 +113,33 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         }
         return ad
     }
+
+    private fun fillViews(ad: Ad) = with(rootElement) {
+        tvSelectCountry.text = ad.country
+        tvSelectCity.text = ad.city
+        edTelephone.setText(ad.telephone)
+        edIndex.setText(ad.index)
+        checkBoxWithSend.isChecked = ad.withSent.toBoolean()
+        tvSelectCategory.text = ad.category
+        edTitle.setText(ad.title)
+        edPrice.setText(ad.price)
+        edDescription.setText(ad.description)
+    }
+
+    private fun checkEditState() {
+        isEditState = isEditState()
+        if (isEditState()) {
+            @Suppress("DEPRECATION")
+            ad = intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad
+            if (ad != null)
+                fillViews(ad!!)
+        }
+    }
+
+    private fun isEditState(): Boolean {
+        return intent.getBooleanExtra(MainActivity.EDIT_STATE, false)
+    }
+
 
     private fun init() {
         imageAdapter = ImageAdapter()
