@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.radzhab.bulletinboard.MainActivity
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.databinding.AdListItemBinding
 import com.radzhab.bulletinboard.model.Ad
 
-class AdsRcAdapter(val act:MainActivity) : RecyclerView.Adapter<AdsRcAdapter.AdHolder>() {
+class AdsRcAdapter(val act: MainActivity) : RecyclerView.Adapter<AdsRcAdapter.AdHolder>() {
     val adArray = ArrayList<Ad>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdHolder {
@@ -28,9 +29,10 @@ class AdsRcAdapter(val act:MainActivity) : RecyclerView.Adapter<AdsRcAdapter.AdH
     }
 
     fun update(newList: List<Ad>) {
+        val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(adArray, newList))
+        diffResult.dispatchUpdatesTo(this)
         adArray.clear()
         adArray.addAll(newList)
-        notifyDataSetChanged()
     }
 
     class AdHolder(val binding: AdListItemBinding, val act: MainActivity) :
@@ -41,6 +43,9 @@ class AdsRcAdapter(val act:MainActivity) : RecyclerView.Adapter<AdsRcAdapter.AdH
             tvPrice.text = ad.price
             showEditPanel(isOwner(ad))
             ibEditAd.setOnClickListener(onClickEdit(ad))
+            ibDeleteAd.setOnClickListener {
+                act.onDeleteItem(ad)
+            }
         }
 
         private fun onClickEdit(ad: Ad): OnClickListener {
@@ -65,6 +70,10 @@ class AdsRcAdapter(val act:MainActivity) : RecyclerView.Adapter<AdsRcAdapter.AdH
             }
         }
 
+    }
+
+    interface deleteItemListener {
+        fun onDeleteItem(ad: Ad)
     }
 
 

@@ -25,9 +25,11 @@ import com.radzhab.bulletinboard.adaptors.AdsRcAdapter
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
+import com.radzhab.bulletinboard.model.Ad
 import com.radzhab.bulletinboard.viewmodel.FirebaseViewModel
 
-class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
+    AdsRcAdapter.deleteItemListener {
 
     private lateinit var tvAccount: TextView
     private lateinit var rootElement: ActivityMainBinding
@@ -53,10 +55,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         rootElement.mainContent.bNavView.selectedItemId = R.id.id_home
     }
 
-   /* override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }*/
+    /* override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+         menuInflater.inflate(R.menu.main_menu, menu)
+         return super.onCreateOptionsMenu(menu)
+     }*/
 
     /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.id_new_ads) {
@@ -172,9 +174,13 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
 
     }
 
-    companion object{
+    companion object {
         const val EDIT_STATE = "edit_state"
         const val ADS_DATA = "ads_data"
+    }
+
+    override fun onDeleteItem(ad: Ad) {
+        firebaseViewModel.deleteItem(ad)
     }
 
 }
