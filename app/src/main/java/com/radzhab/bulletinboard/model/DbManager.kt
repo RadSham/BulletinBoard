@@ -79,13 +79,17 @@ class DbManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val adArray = ArrayList<Ad>()
                 for (item in snapshot.children) {
-
                     var ad: Ad? = null
                     item.children.forEach {
                         if (ad == null) ad = it.child(AD_NODE).getValue(Ad::class.java)
                     }
                     val infoItem = item.child(INFO_NODE).getValue(InfoItem::class.java)
-
+                    val favCounter = item.child(FAVS_NODE).childrenCount
+                    val isFav = auth.uid?.let {
+                        item.child(FAVS_NODE).child(it).getValue(String::class.java)
+                    }
+                    ad?.isFav = isFav != null
+                    ad?.favCounter = favCounter.toString()
                     ad?.viewsCounter = infoItem?.viewsCounter ?: "0"
                     ad?.emailCounter = infoItem?.emailCounter ?: "0"
                     ad?.callsCounter = infoItem?.callsCounter ?: "0"

@@ -55,17 +55,6 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         rootElement.mainContent.bNavView.selectedItemId = R.id.id_home
     }
 
-    /* override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-         menuInflater.inflate(R.menu.main_menu, menu)
-         return super.onCreateOptionsMenu(menu)
-     }*/
-
-    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.id_new_ads) {
-        }
-        return super.onOptionsItemSelected(item)
-    }*/
-
     val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {

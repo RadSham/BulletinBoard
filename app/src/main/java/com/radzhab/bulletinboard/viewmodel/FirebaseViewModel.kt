@@ -1,5 +1,6 @@
 package com.radzhab.bulletinboard.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.radzhab.bulletinboard.model.Ad
@@ -24,7 +25,12 @@ class FirebaseViewModel : ViewModel() {
                 val pos = updatedList?.indexOf(ad)
                 if (pos != -1) {
                     pos?.let {
-                        updatedList[pos] = updatedList[pos].copy(isFav = !ad.isFav)
+                        val favCounter =
+                            if (ad.isFav) ad.favCounter.toInt() - 1 else ad.favCounter.toInt() + 1
+                        updatedList[pos] = updatedList[pos].copy(
+                            favCounter = favCounter.toString(),
+                            isFav = !ad.isFav
+                        )
                     }
                 }
                 liveAdsData.postValue(updatedList)
@@ -39,6 +45,7 @@ class FirebaseViewModel : ViewModel() {
     fun loadMyAds() {
         dbManager.getMyAds(object : DbManager.ReadDataCallback {
             override fun readData(list: ArrayList<Ad>) {
+                Log.d("MyLog", "loadMyAds")
                 liveAdsData.value = list
             }
         })
