@@ -1,6 +1,5 @@
 package com.radzhab.bulletinboard.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.radzhab.bulletinboard.model.Ad
@@ -45,7 +44,14 @@ class FirebaseViewModel : ViewModel() {
     fun loadMyAds() {
         dbManager.getMyAds(object : DbManager.ReadDataCallback {
             override fun readData(list: ArrayList<Ad>) {
-                Log.d("MyLog", "loadMyAds")
+                liveAdsData.value = list
+            }
+        })
+    }
+
+    fun loadMyFavs() {
+        dbManager.getMyFavs(object : DbManager.ReadDataCallback {
+            override fun readData(list: ArrayList<Ad>) {
                 liveAdsData.value = list
             }
         })

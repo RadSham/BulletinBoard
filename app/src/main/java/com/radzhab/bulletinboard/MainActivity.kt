@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     private fun initViewModel() {
         firebaseViewModel.liveAdsData.observe(this) {
             adapter.update(it)
+            rootElement.mainContent.tvEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
@@ -112,8 +114,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                     true
                 }
                 R.id.id_favs -> {
-                    Toast.makeText(this@MainActivity, "Favs", Toast.LENGTH_LONG)
-                        .show()
+                    firebaseViewModel.loadMyFavs()
+                    mainContent.toolbar.title = getString(R.string.ad_my_favs)
                     true
                 }
                 R.id.id_home -> {
