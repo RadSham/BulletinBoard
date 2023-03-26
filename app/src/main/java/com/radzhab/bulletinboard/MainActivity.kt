@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationView.OnNavigationItemSel
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.radzhab.bulletinboard.accountHelper.AccountHelper
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.adaptors.AdsRcAdapter
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
@@ -80,7 +81,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     private fun initViewModel() {
         firebaseViewModel.liveAdsData.observe(this) {
             adapter.update(it)
-            rootElement.mainContent.tvEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+            rootElement.mainContent.tvEmpty.visibility =
+                if (it.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
@@ -151,6 +153,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
             R.id.id_sign_in -> dialogHelper.createSignDialog(DialogConst.SIGN_IN_STATE)
             R.id.id_sign_up -> dialogHelper.createSignDialog(DialogConst.SIGN_UP_STATE)
             R.id.id_sign_out -> {
+                if (myAuth.currentUser?.isAnonymous == true) {
+                    rootElement.drawerLayout.closeDrawer(GravityCompat.START)
+                    return true
+                }
                 uiUpdate(null)
                 myAuth.signOut()
                 dialogHelper.accHelper.signOutGoogle()
@@ -161,8 +167,17 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     }
 
     fun uiUpdate(user: FirebaseUser?) {
-        tvAccount.text = if (user == null) resources.getString(R.string.not_reg) else user.email
-
+        if (user == null) {
+            dialogHelper.accHelper.signInAnonymously(object : AccountHelper.Listener {
+                override fun onComplete() {
+                    tvAccount.setText(R.string.guest)
+                }
+            })
+        } else if (user.isAnonymous) {
+            tvAccount.setText(R.string.guest)
+        } else if (!user.isAnonymous) {
+            tvAccount.text = user.email
+        }
     }
 
     companion object {

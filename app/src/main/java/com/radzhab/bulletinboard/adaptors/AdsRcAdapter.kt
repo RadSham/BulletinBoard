@@ -44,14 +44,14 @@ class AdsRcAdapter(val act: MainActivity) : RecyclerView.Adapter<AdsRcAdapter.Ad
             tvPrice.text = ad.price
             tvViewCounter.text = ad.viewsCounter
             tvFavCounter.text = ad.favCounter
-            if (ad.isFav){
+            if (ad.isFav) {
                 ibFav.setImageResource(R.drawable.ic_fav_pressed)
-            } else{
+            } else {
                 ibFav.setImageResource(R.drawable.ic_fav_not_pressed)
             }
             showEditPanel(isOwner(ad))
-            ibFav.setOnClickListener{
-                act.onFavClicked(ad)
+            ibFav.setOnClickListener {
+                if (act.myAuth.currentUser?.isAnonymous == false) act.onFavClicked(ad)
             }
             itemView.setOnClickListener {
                 act.onAdViewed(ad)

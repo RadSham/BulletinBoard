@@ -8,8 +8,7 @@ import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.accountHelper.AccountHelper
 import com.radzhab.bulletinboard.databinding.SignDialogBinding
 
-class DialogHelper(act: MainActivity) {
-    private val activity = act
+class DialogHelper(val activity: MainActivity) {
     val accHelper = AccountHelper(activity)
 
     fun createSignDialog(index: Int) {

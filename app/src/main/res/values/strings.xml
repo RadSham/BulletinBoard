@@ -33,6 +33,8 @@
     <!-- Account Dialogs -->
     <string name="link_done">Email успешно синхронизирован</string>
     <string name="entry_to_g">У Вас уже есть аккаунт Google.</string>
+    <!-- MainActivity  -->
+    <string name="guest">Гость</string>
     <!-- EditActivity  -->
     <string name="select_country">*Выберите страну</string>
     <string name="select_city">*Выберите город</string>
