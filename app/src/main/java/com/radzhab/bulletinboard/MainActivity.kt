@@ -29,7 +29,7 @@ import com.radzhab.bulletinboard.model.Ad
 import com.radzhab.bulletinboard.viewmodel.FirebaseViewModel
 
 class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
-    AdsRcAdapter.deleteItemListener {
+    AdsRcAdapter.Listener {
 
     private lateinit var tvAccount: TextView
     private lateinit var rootElement: ActivityMainBinding
@@ -181,6 +181,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
 
     override fun onDeleteItem(ad: Ad) {
         firebaseViewModel.deleteItem(ad)
+    }
+
+    override fun onAdViewed(ad: Ad) {
+        firebaseViewModel.adViewed(ad)
     }
 
 }
