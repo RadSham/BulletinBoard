@@ -14,7 +14,7 @@
     </item>
     <item
         android:id="@+id/id_favs"
-        android:icon="@drawable/ic_fav"
+        android:icon="@drawable/ic_fav_not_pressed"
         android:orderInCategory="200"
         android:title="Favs">
     </item>
