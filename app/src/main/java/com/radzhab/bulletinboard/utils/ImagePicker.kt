@@ -1,15 +1,19 @@
 package com.radzhab.bulletinboard.utils
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.Fragment
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
-import com.radzhab.bulletinboard.frag.ImageListFrag
 import io.ak1.pix.helpers.PixEventCallback
 import io.ak1.pix.helpers.addPixToActivity
 import io.ak1.pix.models.Mode
 import io.ak1.pix.models.Options
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object ImagePicker {
     const val MAX_IMAGE_COUNT = 3
@@ -24,28 +28,11 @@ object ImagePicker {
         return options
     }
 
-    fun launcher(
-        edAct: EditAdsActivity,
-        imageCounter: Int,
-        updateOneImage: Boolean
-    ) {
+    fun getMultiImages(edAct: EditAdsActivity, imageCounter: Int) {
         edAct.addPixToActivity(R.id.placeholder, getOptions(imageCounter)) { result ->
             when (result.status) {
                 PixEventCallback.Status.SUCCESS -> {
-                    val fList = edAct.supportFragmentManager.fragments
-                    fList.forEach {
-                        if (it.isVisible) {
-                            edAct.supportFragmentManager.beginTransaction().remove(it)
-                                .commit()
-                        }
-                    }
-                    if (edAct.chooseImageFrag == null) {
-                        openChooseImageFrag(edAct, result.data)
-                    } else if (updateOneImage) {
-                        updateOneImageFrag(edAct,result.data[0])
-                    } else {
-                        updateChooseImageFrag(edAct,result.data)
-                    }
+                    getMultiSelectedImages(edAct, result.data)
                 }
                 //use results as it.data
                 PixEventCallback.Status.BACK_PRESSED -> Log.d(
@@ -53,22 +40,84 @@ object ImagePicker {
                     "BACK_PRESSED"
                 )
             }
+        }
 
+    }
+
+    fun addImages(edAct: EditAdsActivity, imageCounter: Int) {
+        val f = edAct.chooseImageFrag
+        edAct.addPixToActivity(R.id.placeholder, getOptions(imageCounter)) { result ->
+            when (result.status) {
+                PixEventCallback.Status.SUCCESS -> {
+                    edAct.chooseImageFrag = f
+                    openChooseImageFrag(edAct, f!!)
+                    edAct.chooseImageFrag?.updateAdapter(result.data, edAct)
+                }
+                //use results as it.data
+                PixEventCallback.Status.BACK_PRESSED -> Log.d(
+                    "MyLog",
+                    "BACK_PRESSED"
+                )
+            }
         }
     }
 
-    fun openChooseImageFrag(edAct: EditAdsActivity, newList: List<Uri>?) {
-        edAct.chooseImageFrag = ImageListFrag(edAct, newList)
-        edAct.rootElement.scrollViewMine.visibility = View.GONE
-        val fm = edAct.supportFragmentManager.beginTransaction()
-        fm.replace(R.id.placeholder, edAct.chooseImageFrag!!)
-        fm.commit()
+    fun getSingleImages(edAct: EditAdsActivity) {
+        val f = edAct.chooseImageFrag
+        edAct.addPixToActivity(R.id.placeholder, getOptions(1)) { result ->
+            when (result.status) {
+                PixEventCallback.Status.SUCCESS -> {
+                    edAct.chooseImageFrag = f
+                    openChooseImageFrag(edAct, f!!)
+                    singleImage(edAct, result.data[0])
+                }
+
+                //use results as it.data
+                PixEventCallback.Status.BACK_PRESSED -> Log.d(
+                    "MyLog",
+                    "BACK_PRESSED"
+                )
+            }
+        }
     }
 
+    private fun openChooseImageFrag(edAct: EditAdsActivity, f: Fragment) {
+        edAct.rootElement.scrollViewMine.visibility = View.GONE
+        edAct.supportFragmentManager.beginTransaction().replace(R.id.placeholder, f).commit()
+    }
+
+    fun getMultiSelectedImages(edAct: EditAdsActivity, uris: List<Uri>) {
+        if (uris.size > 1 && edAct.chooseImageFrag == null) {
+            edAct.openChooseImageFrag(uris)
+        } else if (uris.size == 1 && edAct.chooseImageFrag == null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                edAct.rootElement.pBarLoad.visibility = View.VISIBLE
+                val bitMapArray = ImageManager.imageResize(edAct, uris) as ArrayList<Bitmap>
+                edAct.rootElement.pBarLoad.visibility = View.GONE
+                edAct.imageAdapter.update(bitMapArray)
+                closePicsFragment(edAct)
+            }
+        }
+    }
+
+    private fun singleImage(edAct: EditAdsActivity, uri: Uri) {
+        edAct.chooseImageFrag?.setSingleImage(uri, edAct.editImagePosition)
+    }
+
+    private fun closePicsFragment(edAct: EditAdsActivity) {
+        val fList = edAct.supportFragmentManager.fragments
+        fList.forEach {
+            if (it.isVisible) {
+                edAct.supportFragmentManager.beginTransaction().remove(it)
+                    .commit()
+            }
+        }
+    }
+/*
     private fun updateChooseImageFrag(edAct: EditAdsActivity, newList: List<Uri>) {
-        edAct.chooseImageFrag = ImageListFrag(edAct, null)
+        edAct.chooseImageFrag = ImageListFrag(edAct)
         edAct.chooseImageFrag?.updateAdapterFromEdit(edAct.imageAdapter.mainArray)
-        edAct.chooseImageFrag!!.updateAdapter(newList)
+        edAct.chooseImageFrag!!.updateAdapter(newList, edAct)
         edAct.rootElement.scrollViewMine.visibility = View.GONE
         val fm = edAct.supportFragmentManager.beginTransaction()
         fm.replace(R.id.placeholder, edAct.chooseImageFrag!!)
@@ -76,13 +125,13 @@ object ImagePicker {
     }
 
     private fun updateOneImageFrag(edAct: EditAdsActivity, newImage: Uri) {
-        edAct.chooseImageFrag = ImageListFrag(edAct, null)
+        edAct.chooseImageFrag = ImageListFrag(edAct)
         edAct.chooseImageFrag?.updateAdapterFromEdit(edAct.imageAdapter.mainArray)
         edAct.chooseImageFrag!!.setSingleImage(newImage, edAct.editImagePosition)
         edAct.rootElement.scrollViewMine.visibility = View.GONE
         val fm = edAct.supportFragmentManager.beginTransaction()
         fm.replace(R.id.placeholder, edAct.chooseImageFrag!!)
         fm.commit()
-    }
+    }*/
 
 }

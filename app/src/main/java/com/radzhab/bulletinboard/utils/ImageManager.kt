@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.ImageView
-import androidx.exifinterface.media.ExifInterface
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,28 +21,9 @@ object ImageManager {
             inJustDecodeBounds = true
         }
         BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, options)
-        return if (imageRotation(context, uri) == 90)
-            listOf(options.outHeight, options.outWidth)
-        else
-            listOf(options.outWidth, options.outHeight)
+        return listOf(options.outWidth, options.outHeight)
     }
 
-    //TODO: doesn't work
-    fun imageRotation(context: Context, uri: Uri): Int {
-        val rotation: Int
-
-        val inputStream = context.contentResolver.openInputStream(uri)
-
-        val exif = inputStream?.let { ExifInterface(it) }
-        val orientation =
-            exif?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        rotation =
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270)
-                90
-            else 0
-        inputStream?.close()
-        return rotation
-    }
 
     suspend fun imageResize(context: Context, uris: List<Uri>): List<Bitmap> =
         withContext(Dispatchers.IO) {
@@ -69,16 +49,16 @@ object ImageManager {
             for (i in uris.indices) {
                 val e = kotlin.runCatching {
                     bitmapList.add(
-                        Picasso.get().load(uris[i].toString())
+                        Picasso.get().load(uris[i])
                             .resize(tempList[i][WIDTH], tempList[i][HEIGHT]).get()
                     )
                 }
+                println(e)
             }
-
             return@withContext bitmapList
         }
 
-    fun chooseScaleType(im: ImageView, bitmap:Bitmap){
+    fun chooseScaleType(im: ImageView, bitmap: Bitmap) {
         if (bitmap.width > bitmap.height) im.scaleType = ImageView.ScaleType.CENTER_CROP
         else im.scaleType = ImageView.ScaleType.CENTER_INSIDE
     }

@@ -50,14 +50,13 @@ class SelectImageRvAdapter(val adapterCallback : AdapterCallback) : RecyclerView
 
             viewBinding.imEditImage.setOnClickListener {
                 viewBinding.pBar.visibility = View.VISIBLE
-                ImagePicker.launcher(context as EditAdsActivity, 1, true)
+                ImagePicker.getSingleImages(context as EditAdsActivity)
                 context.editImagePosition = adapterPosition
             }
 
             viewBinding.imDeleteImage.setOnClickListener {
                 adapter.mainArray.removeAt(adapterPosition)
                 adapter.notifyItemRemoved(adapterPosition)
-//                adapter.notifyDataSetChanged()
                 for (n in 0 until adapter.mainArray.size)
                     adapter.notifyItemChanged(n)
                 adapter.adapterCallback.onItemDelete()

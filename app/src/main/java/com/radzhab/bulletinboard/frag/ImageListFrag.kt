@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import androidx.core.view.get
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.radzhab.bulletinboard.R
@@ -25,14 +27,13 @@ import kotlinx.coroutines.launch
 
 class ImageListFrag(
 
-    private val fragCloseInterface: FragmentCloseInterface,
-    private val newUris: List<Uri>?
+    private val fragCloseInterface: FragmentCloseInterface
 ) : BaseAdsFrag(), AdapterCallback {
     val adapter = SelectImageRvAdapter(this)
     private val drugCallback = ItemTouchMoveCallback(adapter)
     private var job: Job? = null
     val touchHelper = ItemTouchHelper(drugCallback)
-    private var addImageItem:MenuItem? = null
+    private var addImageItem: MenuItem? = null
     lateinit var binding: ListImageFragBinding
 
 
@@ -40,7 +41,7 @@ class ImageListFrag(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = ListImageFragBinding.inflate(layoutInflater)
         adView = binding.adView
         return binding.root
@@ -53,7 +54,6 @@ class ImageListFrag(
             touchHelper.attachToRecyclerView(rcViewSelectImage)
             rcViewSelectImage.layoutManager = LinearLayoutManager(activity)
             rcViewSelectImage.adapter = adapter
-            if (newUris != null) resizeSelectedImages(newUris, true)
         }
     }
 
@@ -77,31 +77,27 @@ class ImageListFrag(
             ?.commit()
     }
 
-    private fun resizeSelectedImages(list: List<Uri>, needClear: Boolean) {
+    fun resizeSelectedImages(list: List<Uri>, needClear: Boolean, activity: Activity) {
 
         job = CoroutineScope(Dispatchers.Main).launch {
-            val dialog = ProgressDialog.createProgressDialog(activity as Activity)
+            val dialog = ProgressDialog.createProgressDialog(activity)
             val bitmapList = ImageManager.imageResize(activity as EditAdsActivity, list)
             dialog.dismiss()
             adapter.updateAdapter(bitmapList, needClear)
-            if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
-                addImageItem?.isVisible = false
-            }
+            if (adapter.mainArray.size > 2) addImageItem?.isVisible = false
         }
     }
 
     private fun setUpToolbar() {
-
         binding.apply {
             tbSelectedImages.inflateMenu(R.menu.menu_choose_image)
             val deleteItem = tbSelectedImages.menu.findItem(R.id.id_delete_image)
             addImageItem = tbSelectedImages.menu.findItem(R.id.id_add_image)
+            if (adapter.mainArray.size > 2) addImageItem?.isVisible = false
 
             tbSelectedImages.setNavigationOnClickListener {
                 showInterAd()
             }
-
-
 
             deleteItem.setOnMenuItemClickListener {
                 adapter.updateAdapter(ArrayList(), true)
@@ -109,28 +105,23 @@ class ImageListFrag(
             }
 
             addImageItem?.setOnMenuItemClickListener {
-                /*if (adapter.mainArray.size >= ImagePicker.MAX_IMAGE_COUNT) {
-                Toast.makeText(context, getString(R.string.max_pics_count), Toast.LENGTH_LONG)
-                    .show()
-                return@setOnMenuItemClickListener false
-            }*/
                 val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
-                ImagePicker.launcher(activity as EditAdsActivity, imageCount, false)
+                ImagePicker.addImages(activity as EditAdsActivity, imageCount)
                 true
             }
         }
-
     }
 
-    fun updateAdapter(listUris: List<Uri>) {
-        resizeSelectedImages(listUris, false)
+    fun updateAdapter(listUris: List<Uri>, activity: Activity) {
+        resizeSelectedImages(listUris, false, activity)
     }
+
     fun setSingleImage(uri: Uri, pos: Int) {
-//        val pBar = this.rootElement.rcViewSelectImage[pos].findViewById<ProgressBar>(R.id.pBar)
+        val pBar = binding.rcViewSelectImage[pos].findViewById<ProgressBar>(R.id.pBar)
         job = CoroutineScope(Dispatchers.Main).launch {
-//            pBar.visibility = View.VISIBLE
-            val bitmapList = ImageManager.imageResize(activity as EditAdsActivity, listOf(uri))
-//            pBar.visibility = View.GONE
+            pBar.visibility = View.VISIBLE
+            val bitmapList = ImageManager.imageResize(activity as EditAdsActivity, arrayListOf(uri))
+            pBar.visibility = View.GONE
             adapter.mainArray[pos] = bitmapList[0]
             adapter.notifyItemChanged(pos)
         }

@@ -1,20 +1,20 @@
 package com.radzhab.bulletinboard.act
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.radzhab.bulletinboard.MainActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.adaptors.ImageAdapter
-import com.radzhab.bulletinboard.model.Ad
-import com.radzhab.bulletinboard.model.DbManager
 import com.radzhab.bulletinboard.databinding.ActivityEditAdsBinding
 import com.radzhab.bulletinboard.dialogs.DialogSpinnerHelper
 import com.radzhab.bulletinboard.frag.FragmentCloseInterface
 import com.radzhab.bulletinboard.frag.ImageListFrag
+import com.radzhab.bulletinboard.model.Ad
+import com.radzhab.bulletinboard.model.DbManager
 import com.radzhab.bulletinboard.utils.CityHelper
 import com.radzhab.bulletinboard.utils.ImagePicker
 
@@ -67,16 +67,15 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         //onClick GetImage
         rootElement.btGetImage.setOnClickListener {
             if (imageAdapter.mainArray.size < 1) {
-                ImagePicker.launcher(this, ImagePicker.MAX_IMAGE_COUNT, false)
+                ImagePicker.getMultiImages(this, ImagePicker.MAX_IMAGE_COUNT)
             } else {
-                ImagePicker.openChooseImageFrag(this, null)
+                openChooseImageFrag(null)
                 chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
             }
             rootElement.scrollViewMine.visibility = View.GONE
         }
 
         rootElement.btPublish.setOnClickListener {
-            Log.d("MyLog", "in rootElement.btPublish.setOnClickListener")
             val adTemp = fillAd()
             if (isEditState) {
                 dbManager.publishAd(adTemp.copy(key = ad?.key), onPublishFinish())
@@ -140,17 +139,24 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         return intent.getBooleanExtra(MainActivity.EDIT_STATE, false)
     }
 
-
     private fun init() {
         imageAdapter = ImageAdapter()
         rootElement.vpImages.adapter = imageAdapter
     }
 
-
     override fun onFragClose(list: List<Bitmap>) {
         rootElement.scrollViewMine.visibility = View.VISIBLE
         imageAdapter.update(list)
-//        chooseImageFrag = null
+        chooseImageFrag = null
+    }
+
+    fun openChooseImageFrag(newList: List<Uri>?) {
+        chooseImageFrag = ImageListFrag(this)
+        if (newList != null) chooseImageFrag?.resizeSelectedImages(newList, true, this)
+        rootElement.scrollViewMine.visibility = View.GONE
+        val fm = supportFragmentManager.beginTransaction()
+        fm.replace(R.id.placeholder, chooseImageFrag!!)
+        fm.commit()
     }
 
 }
