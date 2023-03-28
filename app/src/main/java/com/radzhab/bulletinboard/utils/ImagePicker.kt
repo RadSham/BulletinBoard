@@ -33,6 +33,7 @@ object ImagePicker {
             when (result.status) {
                 PixEventCallback.Status.SUCCESS -> {
                     getMultiSelectedImages(edAct, result.data)
+                    closePicsFragment(edAct)
                 }
                 //use results as it.data
                 PixEventCallback.Status.BACK_PRESSED -> Log.d(
@@ -95,7 +96,6 @@ object ImagePicker {
                 val bitMapArray = ImageManager.imageResize(edAct, uris) as ArrayList<Bitmap>
                 edAct.rootElement.pBarLoad.visibility = View.GONE
                 edAct.imageAdapter.update(bitMapArray)
-                closePicsFragment(edAct)
             }
         }
     }

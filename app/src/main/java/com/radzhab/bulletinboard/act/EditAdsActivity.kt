@@ -72,7 +72,6 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 openChooseImageFrag(null)
                 chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
             }
-            rootElement.scrollViewMine.visibility = View.GONE
         }
 
         rootElement.btPublish.setOnClickListener {
