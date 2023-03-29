@@ -67,14 +67,15 @@ class ImageListFrag(
 
     override fun onDetach() {
         super.onDetach()
-        fragCloseInterface.onFragClose(adapter.mainArray)
-        job?.cancel()
+
     }
 
     override fun onClose() {
         super.onClose()
         activity?.supportFragmentManager?.beginTransaction()?.remove(this@ImageListFrag)
             ?.commit()
+        fragCloseInterface.onFragClose(adapter.mainArray)
+        job?.cancel()
     }
 
     fun resizeSelectedImages(list: List<Uri>, needClear: Boolean, activity: Activity) {

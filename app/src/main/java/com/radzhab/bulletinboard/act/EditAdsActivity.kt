@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.OnCompleteListener
 import com.radzhab.bulletinboard.MainActivity
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.adaptors.ImageAdapter
@@ -17,6 +18,7 @@ import com.radzhab.bulletinboard.model.Ad
 import com.radzhab.bulletinboard.model.DbManager
 import com.radzhab.bulletinboard.utils.CityHelper
 import com.radzhab.bulletinboard.utils.ImagePicker
+import java.io.ByteArrayOutputStream
 
 class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var rootElement: ActivityEditAdsBinding
@@ -79,7 +81,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             if (isEditState) {
                 dbManager.publishAd(adTemp.copy(key = ad?.key), onPublishFinish())
             } else {
-                dbManager.publishAd(adTemp, onPublishFinish())
+//                dbManager.publishAd(adTemp, onPublishFinish())
+                uploadImages(adTemp)
             }
         }
     }
@@ -105,6 +108,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 edTitle.text.toString(),
                 edPrice.text.toString(),
                 edDescription.text.toString(),
+                "empty",
                 dbManager.db.push().key,
                 dbManager.auth.uid
             )
@@ -156,6 +160,29 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         val fm = supportFragmentManager.beginTransaction()
         fm.replace(R.id.placeholder, chooseImageFrag!!)
         fm.commit()
+    }
+
+    private fun uploadImages(adTemp: Ad) {
+        val byteArray = prepareImageByteArray(imageAdapter.mainArray[0])
+        uploadImage(byteArray) {
+            dbManager.publishAd(adTemp.copy(mainImage = it.result.toString()), onPublishFinish())
+        }
+    }
+
+    private fun prepareImageByteArray(bitmap: Bitmap): ByteArray {
+        val outStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outStream)
+        return outStream.toByteArray()
+    }
+
+    private fun uploadImage(byteArray: ByteArray, listener: OnCompleteListener<Uri>) {
+        val imStorageReference = dbManager.dbStorage
+            .child(dbManager.auth.uid!!)
+            .child("image_${System.currentTimeMillis()}")
+        val upTask = imStorageReference.putBytes(byteArray)
+        upTask.continueWithTask { task ->
+            imStorageReference.downloadUrl
+        }.addOnCompleteListener(listener)
     }
 
 }

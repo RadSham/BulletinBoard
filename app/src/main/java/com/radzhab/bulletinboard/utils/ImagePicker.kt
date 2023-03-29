@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import android.view.View
-import androidx.fragment.app.Fragment
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import io.ak1.pix.helpers.PixEventCallback
@@ -46,12 +45,10 @@ object ImagePicker {
     }
 
     fun addImages(edAct: EditAdsActivity, imageCounter: Int) {
-        val f = edAct.chooseImageFrag
         edAct.addPixToActivity(R.id.placeholder, getOptions(imageCounter)) { result ->
             when (result.status) {
                 PixEventCallback.Status.SUCCESS -> {
-                    edAct.chooseImageFrag = f
-                    openChooseImageFrag(edAct, f!!)
+                    openChooseImageFrag(edAct)
                     edAct.chooseImageFrag?.updateAdapter(result.data, edAct)
                 }
                 //use results as it.data
@@ -64,12 +61,10 @@ object ImagePicker {
     }
 
     fun getSingleImages(edAct: EditAdsActivity) {
-        val f = edAct.chooseImageFrag
         edAct.addPixToActivity(R.id.placeholder, getOptions(1)) { result ->
             when (result.status) {
                 PixEventCallback.Status.SUCCESS -> {
-                    edAct.chooseImageFrag = f
-                    openChooseImageFrag(edAct, f!!)
+                    openChooseImageFrag(edAct)
                     singleImage(edAct, result.data[0])
                 }
 
@@ -82,9 +77,9 @@ object ImagePicker {
         }
     }
 
-    private fun openChooseImageFrag(edAct: EditAdsActivity, f: Fragment) {
+    private fun openChooseImageFrag(edAct: EditAdsActivity) {
         edAct.rootElement.scrollViewMine.visibility = View.GONE
-        edAct.supportFragmentManager.beginTransaction().replace(R.id.placeholder, f).commit()
+        edAct.supportFragmentManager.beginTransaction().replace(R.id.placeholder, edAct.chooseImageFrag!!).commit()
     }
 
     fun getMultiSelectedImages(edAct: EditAdsActivity, uris: List<Uri>) {
