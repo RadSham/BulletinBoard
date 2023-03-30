@@ -28,6 +28,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     private val dbManager = DbManager()
 
     var editImagePosition = 0
+    private var imageIndex = 0
     private var isEditState: Boolean = false
     private var ad: Ad? = null
 
@@ -77,12 +78,13 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         }
 
         rootElement.btPublish.setOnClickListener {
-            val adTemp = fillAd()
+            ad = fillAd()
             if (isEditState) {
-                dbManager.publishAd(adTemp.copy(key = ad?.key), onPublishFinish())
+                ad?.copy(key = this.ad?.key)
+                    ?.let { it1 -> dbManager.publishAd(it1, onPublishFinish()) }
             } else {
 //                dbManager.publishAd(adTemp, onPublishFinish())
-                uploadImages(adTemp)
+                uploadImages()
             }
         }
     }
@@ -162,10 +164,29 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         fm.commit()
     }
 
-    private fun uploadImages(adTemp: Ad) {
-        val byteArray = prepareImageByteArray(imageAdapter.mainArray[0])
+    private fun uploadImages() {
+        if (imageAdapter.mainArray.size == imageIndex) {
+            dbManager.publishAd(ad!!, onPublishFinish())
+            return
+        }
+        val byteArray = prepareImageByteArray(imageAdapter.mainArray[imageIndex])
         uploadImage(byteArray) {
-            dbManager.publishAd(adTemp.copy(mainImage = it.result.toString()), onPublishFinish())
+//            dbManager.publishAd(ad!!, onPublishFinish())
+            nextImage(it.result.toString())
+        }
+    }
+
+    private fun nextImage(uri: String) {
+        setImageUriToAd(uri)
+        imageIndex++
+        uploadImages()
+    }
+
+    private fun setImageUriToAd(uri: String) {
+        when (imageIndex) {
+            0 -> ad = ad?.copy(mainImage = uri)
+            1 -> ad = ad?.copy(secondImage = uri)
+            2 -> ad = ad?.copy(thirdImage = uri)
         }
     }
 
