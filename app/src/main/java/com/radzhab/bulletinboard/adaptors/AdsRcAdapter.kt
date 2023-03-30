@@ -12,6 +12,7 @@ import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.databinding.AdListItemBinding
 import com.radzhab.bulletinboard.model.Ad
+import com.squareup.picasso.Picasso
 
 class AdsRcAdapter(val act: MainActivity) : RecyclerView.Adapter<AdsRcAdapter.AdHolder>() {
     val adArray = ArrayList<Ad>()
@@ -44,12 +45,14 @@ class AdsRcAdapter(val act: MainActivity) : RecyclerView.Adapter<AdsRcAdapter.Ad
             tvPrice.text = ad.price
             tvViewCounter.text = ad.viewsCounter
             tvFavCounter.text = ad.favCounter
-            if (ad.isFav) {
-                ibFav.setImageResource(R.drawable.ic_fav_pressed)
-            } else {
-                ibFav.setImageResource(R.drawable.ic_fav_not_pressed)
-            }
+            Picasso.get().load(ad.mainImage).into(mainImage)
+
+            isFav(ad)
             showEditPanel(isOwner(ad))
+            mainOnClick(ad)
+        }
+
+        private fun mainOnClick(ad: Ad) = with(binding) {
             ibFav.setOnClickListener {
                 if (act.myAuth.currentUser?.isAnonymous == false) act.onFavClicked(ad)
             }
@@ -59,6 +62,14 @@ class AdsRcAdapter(val act: MainActivity) : RecyclerView.Adapter<AdsRcAdapter.Ad
             ibEditAd.setOnClickListener(onClickEdit(ad))
             ibDeleteAd.setOnClickListener {
                 act.onDeleteItem(ad)
+            }
+        }
+
+        private fun isFav(ad: Ad) {
+            if (ad.isFav) {
+                binding.ibFav.setImageResource(R.drawable.ic_fav_pressed)
+            } else {
+                binding.ibFav.setImageResource(R.drawable.ic_fav_not_pressed)
             }
         }
 

@@ -98,9 +98,9 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     }
 
     private fun fillAd(): Ad {
-        val ad: Ad
+        val adTemp: Ad
         rootElement.apply {
-            ad = Ad(
+            adTemp = Ad(
                 tvSelectCountry.text.toString(),
                 tvSelectCity.text.toString(),
                 edTelephone.text.toString(),
@@ -111,11 +111,14 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 edPrice.text.toString(),
                 edDescription.text.toString(),
                 "empty",
-                dbManager.db.push().key,
+                "empty",
+                "empty",
+                ad?.key ?: dbManager.db.push().key.toString(),
                 dbManager.auth.uid
             )
         }
-        return ad
+
+        return adTemp
     }
 
     private fun fillViews(ad: Ad) = with(rootElement) {
