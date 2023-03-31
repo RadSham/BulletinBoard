@@ -55,6 +55,9 @@
     <string name="with_send">С отправкой</string>
     <string name="send">Отправка</string>
     <string name="publish">Опубликовать</string>
+    <!-- DescActivity-->
+    <string name="tel_desc">Телефон:</string>
+
     <!-- Ad List Item  -->
     <string name="price_desc">Цена:</string>
 
@@ -62,6 +65,11 @@
     <!-- EditActivity ImageListFragment -->
     <string name="back">Back</string>
     <string name="max_pics_count">Максимальное количество 3 шт.</string>
+    <string name="email_desc">Email:</string>
+    <string name="country_desc">Страна:</string>
+    <string name="city_desc">Город:</string>
+    <string name="index_desc">Индекс:</string>
+    <string name="with_sent_desc">С отправкой:</string>
 
 
 </resources>
