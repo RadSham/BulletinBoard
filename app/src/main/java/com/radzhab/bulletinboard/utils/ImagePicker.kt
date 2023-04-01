@@ -78,7 +78,7 @@ object ImagePicker {
     }
 
     private fun openChooseImageFrag(edAct: EditAdsActivity) {
-        edAct.rootElement.scrollViewMine.visibility = View.GONE
+        edAct.binding.scrollViewMine.visibility = View.GONE
         edAct.supportFragmentManager.beginTransaction().replace(R.id.placeholder, edAct.chooseImageFrag!!).commit()
     }
 
@@ -87,9 +87,9 @@ object ImagePicker {
             edAct.openChooseImageFrag(uris)
         } else if (uris.size == 1 && edAct.chooseImageFrag == null) {
             CoroutineScope(Dispatchers.Main).launch {
-                edAct.rootElement.pBarLoad.visibility = View.VISIBLE
+                edAct.binding.pBarLoad.visibility = View.VISIBLE
                 val bitMapArray = ImageManager.imageResize(edAct, uris) as ArrayList<Bitmap>
-                edAct.rootElement.pBarLoad.visibility = View.GONE
+                edAct.binding.pBarLoad.visibility = View.GONE
                 edAct.imageAdapter.update(bitMapArray)
             }
         }

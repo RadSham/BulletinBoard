@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.radzhab.bulletinboard.accountHelper.AccountHelper
+import com.radzhab.bulletinboard.act.DescriptionActivity
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.adaptors.AdsRcAdapter
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
@@ -183,6 +184,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     companion object {
         const val EDIT_STATE = "edit_state"
         const val ADS_DATA = "ads_data"
+        const val AD = "AD"
     }
 
     override fun onDeleteItem(ad: Ad) {
@@ -191,6 +193,9 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
 
     override fun onAdViewed(ad: Ad) {
         firebaseViewModel.adViewed(ad)
+        val i = Intent(this, DescriptionActivity::class.java)
+        i.putExtra(AD, ad)
+        startActivity(i)
     }
 
     override fun onFavClicked(ad: Ad) {
