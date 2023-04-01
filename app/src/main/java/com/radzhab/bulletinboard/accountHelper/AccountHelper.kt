@@ -79,7 +79,6 @@ class AccountHelper(private val act: MainActivity) {
     }
 
     private fun signInWithEmailException(e: Exception, email: String, password: String) {
-//        Log.d("MyLog", "Exception : " + e)
 
         if (e is FirebaseAuthInvalidCredentialsException) {
             if (e.errorCode == FirebaseAuthConstants.ERROR_INVALID_EMAIL) {
@@ -136,7 +135,7 @@ class AccountHelper(private val act: MainActivity) {
     fun signInWithGoogle() {
         signInClient = getSignInClient()
         val intent = signInClient.signInIntent
-        act.startForResult.launch(intent)
+        act.googleSignInLauncher.launch(intent)
     }
 
     fun signOutGoogle() {
