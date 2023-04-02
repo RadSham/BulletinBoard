@@ -118,7 +118,8 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 "empty",
                 "empty",
                 ad?.key ?: dbManager.db.push().key.toString(),
-                dbManager.auth.uid
+                dbManager.auth.uid,
+                System.currentTimeMillis().toString()
             )
         }
 

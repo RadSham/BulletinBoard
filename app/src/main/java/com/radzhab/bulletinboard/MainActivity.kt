@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     val adapter = AdsRcAdapter(this)
     lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
     private val firebaseViewModel: FirebaseViewModel by viewModels()
+    private var clearUpdate: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,6 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         init()
         initRecyclerView()
         initViewModel()
-        firebaseViewModel.loadAllAds()
         buttonMenuOnClick()
         scrollListener()
     }
@@ -93,9 +93,13 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
 
     private fun initViewModel() {
         firebaseViewModel.liveAdsData.observe(this) {
-            adapter.update(it)
+            if (!clearUpdate) {
+                adapter.updateAdapter(it)
+            } else {
+                adapter.updateAdapterWithClear(it)
+            }
             binding.mainContent.tvEmpty.visibility =
-                if (it.isEmpty()) View.VISIBLE else View.GONE
+                if (adapter.itemCount == 0) View.VISIBLE else View.GONE
         }
     }
 
@@ -120,6 +124,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
 
     private fun buttonMenuOnClick() = with(binding) {
         mainContent.bNavView.setOnItemSelectedListener { item ->
+            clearUpdate = true
             when (item.itemId) {
                 R.id.id_new_ad -> {
                     val i = Intent(this@MainActivity, EditAdsActivity::class.java)
@@ -137,7 +142,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                     true
                 }
                 R.id.id_home -> {
-                    firebaseViewModel.loadAllAds()
+                    firebaseViewModel.loadAllAds("0")
                     mainContent.toolbar.title = getString(R.string.def)
                     true
                 }
@@ -154,6 +159,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        clearUpdate = true
         when (item.itemId) {
             R.id.id_my_adds -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG)
                 .show()
@@ -198,7 +204,6 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
             Picasso.get().load(user.photoUrl).into(imAccount)
         }
     }
-
 
 
     override fun onDeleteItem(ad: Ad) {
@@ -247,12 +252,16 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         accCat.title = spanAccCat
     }
 
-    private fun scrollListener() = with(binding.mainContent){
-        rcView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+    private fun scrollListener() = with(binding.mainContent) {
+        rcView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(SCROLL_DOWN) && (newState == RecyclerView.SCROLL_STATE_IDLE)){
-                    Log.d("MyLog", "Can't scroll down")
+                if (!recyclerView.canScrollVertically(SCROLL_DOWN) && (newState == RecyclerView.SCROLL_STATE_IDLE)) {
+                    clearUpdate = false
+                    val adsList = firebaseViewModel.liveAdsData.value!!
+                    if (adsList.isNotEmpty()) {
+                        firebaseViewModel.loadAllAds(adsList[adsList.size - 1].time)
+                    }
                 }
             }
         })

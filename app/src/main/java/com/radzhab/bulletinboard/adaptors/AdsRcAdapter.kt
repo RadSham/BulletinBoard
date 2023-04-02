@@ -30,7 +30,18 @@ class AdsRcAdapter(val act: MainActivity) : RecyclerView.Adapter<AdsRcAdapter.Ad
         return adArray.size
     }
 
-    fun update(newList: List<Ad>) {
+    fun updateAdapter(newList: List<Ad>) {
+        val tempArray = ArrayList<Ad>()
+        tempArray.addAll(adArray)
+        tempArray.addAll(newList)
+
+        val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(adArray, tempArray))
+        diffResult.dispatchUpdatesTo(this)
+        adArray.clear()
+        adArray.addAll(tempArray)
+    }
+
+    fun updateAdapterWithClear(newList: List<Ad>) {
         val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(adArray, newList))
         diffResult.dispatchUpdatesTo(this)
         adArray.clear()

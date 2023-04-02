@@ -16,6 +16,7 @@ data class Ad(
     val thirdImage: String? = null,
     val key: String? = null,
     val uid: String? = null,
+    val time: String = "0",
     var favCounter: String = "0",
     var isFav: Boolean = false,
 
