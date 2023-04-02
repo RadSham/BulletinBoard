@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
     private val firebaseViewModel: FirebaseViewModel by viewModels()
     private var clearUpdate: Boolean = true
+    private var currentCategory: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,17 +94,34 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
 
     private fun initViewModel() {
         firebaseViewModel.liveAdsData.observe(this) {
+            val list = getAdsByCategory(it)
             if (!clearUpdate) {
-                adapter.updateAdapter(it)
+                adapter.updateAdapter(list)
             } else {
-                adapter.updateAdapterWithClear(it)
+                adapter.updateAdapterWithClear(list)
             }
             binding.mainContent.tvEmpty.visibility =
                 if (adapter.itemCount == 0) View.VISIBLE else View.GONE
         }
     }
 
+    private fun getAdsByCategory(list: ArrayList<Ad>): ArrayList<Ad> {
+        val tempList = ArrayList<Ad>()
+        tempList.addAll(list)
+        if (currentCategory != getString(R.string.def)){
+            tempList.clear()
+            list.forEach {
+                if (currentCategory == it.category){
+                    tempList.add(it)
+                }
+            }
+        }
+        tempList.reverse()
+        return tempList
+    }
+
     private fun init() {
+        currentCategory = getString(R.string.def)
         setSupportActionBar(binding.mainContent.toolbar)
         onActivityResult()
         navViewSettings()
@@ -142,7 +160,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                     true
                 }
                 R.id.id_home -> {
-                    firebaseViewModel.loadAllAds("0")
+                    currentCategory = getString(R.string.def)
+                    firebaseViewModel.loadAllAdsFirstPage()
                     mainContent.toolbar.title = getString(R.string.def)
                     true
                 }
@@ -161,17 +180,19 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         clearUpdate = true
         when (item.itemId) {
-            R.id.id_my_adds -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG)
-                .show()
-
-            R.id.id_car -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG)
-                .show()
-            R.id.id_pc -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG)
-                .show()
-            R.id.id_phone -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG)
-                .show()
-            R.id.id_dm -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG)
-                .show()
+            R.id.id_my_adds -> Toast.makeText(this, "Pressed $item", Toast.LENGTH_LONG).show()
+            R.id.id_car -> {
+                getAdsFromCat(getString(R.string.ad_car))
+            }
+            R.id.id_pc -> {
+                getAdsFromCat(getString(R.string.ad_pc))
+            }
+            R.id.id_phone -> {
+                getAdsFromCat(getString(R.string.ad_phone))
+            }
+            R.id.id_dm -> {
+                getAdsFromCat(getString(R.string.ad_dm))
+            }
             R.id.id_sign_in -> dialogHelper.createSignDialog(DialogConst.SIGN_IN_STATE)
             R.id.id_sign_up -> dialogHelper.createSignDialog(DialogConst.SIGN_UP_STATE)
             R.id.id_sign_out -> {
@@ -186,6 +207,11 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun getAdsFromCat(cat: String) {
+        currentCategory = cat
+        firebaseViewModel.loadAllAdsFromCatFirstPage(cat)
     }
 
     fun uiUpdate(user: FirebaseUser?) {
@@ -204,7 +230,6 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
             Picasso.get().load(user.photoUrl).into(imAccount)
         }
     }
-
 
     override fun onDeleteItem(ad: Ad) {
         firebaseViewModel.deleteItem(ad)
@@ -260,11 +285,21 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                     clearUpdate = false
                     val adsList = firebaseViewModel.liveAdsData.value!!
                     if (adsList.isNotEmpty()) {
-                        firebaseViewModel.loadAllAds(adsList[adsList.size - 1].time)
+                        getAdsFromCat(adsList)
                     }
                 }
             }
         })
+    }
+
+    private fun getAdsFromCat(adsList: ArrayList<Ad>) {
+        val adFirst = adsList[0]
+        if (currentCategory == getString(R.string.def)) {
+            firebaseViewModel.loadAllAdsNextPage(adFirst.time)
+        } else {
+            val catTime = "${adFirst.category}_${adFirst.time}"
+            firebaseViewModel.loadAllAdsFromCatNextPage(catTime)
+        }
     }
 
     companion object {

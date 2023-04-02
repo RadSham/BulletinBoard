@@ -19,7 +19,11 @@ class DbManager {
             db.child(ad.key ?: "empty")
                 .child(auth.uid!!).child(AD_NODE)
                 .setValue(ad).addOnCompleteListener {
-                    finishWorkListener.onFinish()
+                    val adFilter = AdFilter(ad.time, "${ad.category}_${ad.time}")
+                    db.child(ad.key ?: "empty").child(FILTER_NODE)
+                        .setValue(adFilter).addOnCompleteListener {
+                            finishWorkListener.onFinish()
+                        }
                 }
         }
     }
@@ -70,9 +74,24 @@ class DbManager {
         readDataFromDb(query, readDataCallback)
     }
 
-    fun getAllAds(lastTime: String, readDataCallback: ReadDataCallback) {
-        val query = db.orderByChild(auth.uid + "/ad/time")
-            .startAfter(lastTime).limitToFirst(ADS_LIMIT)
+    fun getAllAdsFirstPage(readDataCallback: ReadDataCallback) {
+        val query = db.orderByChild(FILTER_TIME).limitToLast(ADS_LIMIT)
+        readDataFromDb(query, readDataCallback)
+    }
+
+    fun getAllAdsNextPage(time: String, readDataCallback: ReadDataCallback) {
+        val query = db.orderByChild(FILTER_TIME).endBefore(time).limitToLast(ADS_LIMIT)
+        readDataFromDb(query, readDataCallback)
+    }
+
+    fun getAllAdsFromCatFirstPage(cat: String, readDataCallback: ReadDataCallback) {
+        val query = db.orderByChild(FILTER_CAT_TIME)
+            .startAt(cat).endAt("${cat}_\uf8ff").limitToLast(ADS_LIMIT)
+        readDataFromDb(query, readDataCallback)
+    }
+
+    fun getAllAdsFromCatNextPage(catTime: String, readDataCallback: ReadDataCallback) {
+        val query = db.orderByChild(FILTER_CAT_TIME).endBefore(catTime).limitToLast(ADS_LIMIT)
         readDataFromDb(query, readDataCallback)
     }
 
@@ -122,9 +141,12 @@ class DbManager {
 
     companion object {
         const val AD_NODE = "ad"
+        const val FILTER_NODE = "adFilter"
         const val MAIN_NODE = "main"
         const val INFO_NODE = "info"
         const val FAVS_NODE = "favs"
         const val ADS_LIMIT = 2
+        const val FILTER_TIME = "/adFilter/time"
+        const val FILTER_CAT_TIME = "/adFilter/catTime"
     }
 }
