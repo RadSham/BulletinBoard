@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorRed"
+        android:background="@color/red"
         android:padding="3dp"
         android:text="Гость"
         android:textColor="@color/white"

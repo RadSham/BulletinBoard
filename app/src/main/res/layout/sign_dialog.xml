@@ -59,7 +59,7 @@
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
         android:text="@string/dialog_reset_email_message"
-        android:textColor="@color/colorRed"
+        android:textColor="@color/red"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/edSignEmail"
         app:layout_constraintStart_toStartOf="@+id/edSignEmail"

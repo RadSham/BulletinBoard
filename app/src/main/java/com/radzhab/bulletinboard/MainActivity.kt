@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         initViewModel()
         firebaseViewModel.loadAllAds()
         buttonMenuOnClick()
+        scrollListener()
     }
 
     override fun onResume() {
@@ -197,11 +199,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         }
     }
 
-    companion object {
-        const val EDIT_STATE = "edit_state"
-        const val ADS_DATA = "ads_data"
-        const val AD = "AD"
-    }
+
 
     override fun onDeleteItem(ad: Ad) {
         firebaseViewModel.deleteItem(ad)
@@ -227,7 +225,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                 ForegroundColorSpan(
                     ContextCompat.getColor(
                         this@MainActivity,
-                        R.color.colorRed
+                        R.color.red
                     )
                 ), 0, adsCat.title!!.length, 0
             )
@@ -241,12 +239,30 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                 ForegroundColorSpan(
                     ContextCompat.getColor(
                         this@MainActivity,
-                        R.color.colorRed
+                        R.color.green_main
                     )
                 ), 0, accCat.title!!.length, 0
             )
         }
         accCat.title = spanAccCat
+    }
+
+    private fun scrollListener() = with(binding.mainContent){
+        rcView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(SCROLL_DOWN) && (newState == RecyclerView.SCROLL_STATE_IDLE)){
+                    Log.d("MyLog", "Can't scroll down")
+                }
+            }
+        })
+    }
+
+    companion object {
+        const val EDIT_STATE = "edit_state"
+        const val ADS_DATA = "ads_data"
+        const val AD = "AD"
+        const val SCROLL_DOWN = 1
     }
 
 }
