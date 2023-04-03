@@ -1,7 +1,7 @@
 package com.radzhab.bulletinboard.act
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,11 +22,25 @@ class FilterActivity : AppCompatActivity() {
         onClickSelectCountry()
         onClickButtonFilterApply()
         actionBarSettings()
+        getFilter()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) finish()
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun getFilter() = with(binding) {
+        val filter = intent.getStringExtra(FILTER_KEY)
+        if (filter != null && filter != "empty") {
+            val filterArray = filter.split("_")
+            if (filterArray[0] != getString(R.string.select_country)) tvSelectCountry.text =
+                filterArray[0]
+            if (filterArray[1] != getString(R.string.select_city)) tvSelectCity.text =
+                filterArray[1]
+            if (filterArray[2] != "empty") edIndex.setText(filterArray[2])
+            checkBoxWithSend.isChecked = filterArray[3].toBoolean()
+        }
     }
 
     //onClick tvSelectCity
@@ -41,8 +55,7 @@ class FilterActivity : AppCompatActivity() {
                     this@FilterActivity,
                     getString(R.string.no_country_selected),
                     Toast.LENGTH_LONG
-                )
-                    .show()
+                ).show()
             }
         }
     }
@@ -60,7 +73,11 @@ class FilterActivity : AppCompatActivity() {
 
     private fun onClickButtonFilterApply() = with(binding) {
         btFilterApply.setOnClickListener {
-            Log.d("MyLog", "Filter: ${createFilter()}")
+            val i = Intent().apply {
+                putExtra(FILTER_KEY, createFilter())
+            }
+            setResult(RESULT_OK, i)
+            finish()
         }
     }
 
@@ -79,6 +96,9 @@ class FilterActivity : AppCompatActivity() {
             ) {
                 stringBuilder.append(s)
                 if (i != arrayTempFilter.size - 1) stringBuilder.append("_")
+            } else {
+                stringBuilder.append("empty")
+                if (i != arrayTempFilter.size - 1) stringBuilder.append("_")
             }
         }
         return stringBuilder.toString()
@@ -89,5 +109,8 @@ class FilterActivity : AppCompatActivity() {
         ab?.setDisplayHomeAsUpEnabled(true)
     }
 
+    companion object {
+        const val FILTER_KEY = "filter_key"
+    }
 
 }

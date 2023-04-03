@@ -80,7 +80,6 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             val listCategories =
                 resources.getStringArray(R.array.category).toMutableList() as ArrayList
             dialog.showSpinnerDialog(this@EditAdsActivity, listCategories, binding.tvSelectCategory)
-
         }
     }
 

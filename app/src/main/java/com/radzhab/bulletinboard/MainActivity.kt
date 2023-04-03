@@ -50,9 +50,11 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     val myAuth = Firebase.auth
     val adapter = AdsRcAdapter(this)
     lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
+    lateinit var filterLauncher: ActivityResultLauncher<Intent>
     private val firebaseViewModel: FirebaseViewModel by viewModels()
     private var clearUpdate: Boolean = true
     private var currentCategory: String? = null
+    private var filter: String? = "empty"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +66,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         initViewModel()
         buttonMenuOnClick()
         scrollListener()
+        onActivityResultFilter()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -72,8 +75,11 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.id_filter){
-            startActivity(Intent(this@MainActivity, FilterActivity::class.java))
+        if (item.itemId == R.id.id_filter) {
+            val i = Intent(this@MainActivity, FilterActivity::class.java).apply {
+                putExtra(FilterActivity.FILTER_KEY, filter)
+            }
+            filterLauncher.launch(i)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -101,6 +107,17 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
             }
     }
 
+    private fun onActivityResultFilter() {
+        filterLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == RESULT_OK) {
+                filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
+                Log.d("MyLog","filter : $filter")
+            }
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         uiUpdate(myAuth.currentUser)
@@ -122,10 +139,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     private fun getAdsByCategory(list: ArrayList<Ad>): ArrayList<Ad> {
         val tempList = ArrayList<Ad>()
         tempList.addAll(list)
-        if (currentCategory != getString(R.string.def)){
+        if (currentCategory != getString(R.string.def)) {
             tempList.clear()
             list.forEach {
-                if (currentCategory == it.category){
+                if (currentCategory == it.category) {
                     tempList.add(it)
                 }
             }
