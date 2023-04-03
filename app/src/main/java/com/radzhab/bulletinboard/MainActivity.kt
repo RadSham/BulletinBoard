@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -30,6 +31,7 @@ import com.google.firebase.ktx.Firebase
 import com.radzhab.bulletinboard.accountHelper.AccountHelper
 import com.radzhab.bulletinboard.act.DescriptionActivity
 import com.radzhab.bulletinboard.act.EditAdsActivity
+import com.radzhab.bulletinboard.act.FilterActivity
 import com.radzhab.bulletinboard.adaptors.AdsRcAdapter
 import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
@@ -62,6 +64,18 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         initViewModel()
         buttonMenuOnClick()
         scrollListener()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.id_filter){
+            startActivity(Intent(this@MainActivity, FilterActivity::class.java))
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
