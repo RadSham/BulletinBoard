@@ -57,10 +57,11 @@
     <string name="publish">Опубликовать</string>
     <!-- DescActivity-->
     <string name="tel_desc">Телефон:</string>
+    <!-- FilterActivity-->
+    <string name="apply_filter">Применить фильтр</string>
 
     <!-- Ad List Item  -->
     <string name="price_desc">Цена:</string>
-
 
     <!-- EditActivity ImageListFragment -->
     <string name="back">Back</string>

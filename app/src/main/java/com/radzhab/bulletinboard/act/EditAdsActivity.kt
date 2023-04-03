@@ -39,51 +39,68 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         binding = ActivityEditAdsBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        onClickSelectCountry()
+        onClickSelectCity()
+        onClickSelectCategory()
+        onClickGetImage()
+        onClickButtonPublish()
         init()
         checkEditState()
         imageChangeCounter()
+    }
 
-        //onClick tvSelectCountry
-        binding.tvSelectCountry.setOnClickListener {
-            val listCountries = CityHelper.getAllCountries(this)
-            dialog.showSpinnerDialog(this, listCountries, binding.tvSelectCountry)
-            if (binding.tvSelectCity.text.toString() != getString(R.string.select_city)) {
-                binding.tvSelectCity.text = getString(R.string.select_city)
+    //onClick tvSelectCountry
+    private fun onClickSelectCountry() = with(binding) {
+        tvSelectCountry.setOnClickListener {
+            val listCountries = CityHelper.getAllCountries(this@EditAdsActivity)
+            dialog.showSpinnerDialog(this@EditAdsActivity, listCountries, binding.tvSelectCountry)
+            if (tvSelectCity.text.toString() != getString(R.string.select_city)) {
+                tvSelectCity.text = getString(R.string.select_city)
             }
         }
+    }
 
-        //onClick tvSelectCity
-        binding.tvSelectCity.setOnClickListener {
-            val selectedCountry = binding.tvSelectCountry.text.toString()
+    //onClick tvSelectCity
+    private fun onClickSelectCity() = with(binding) {
+        tvSelectCity.setOnClickListener {
+            val selectedCountry = tvSelectCountry.text.toString()
             if (selectedCountry != getString(R.string.select_country)) {
-                val listCities = CityHelper.getAllCities(selectedCountry, this)
-                dialog.showSpinnerDialog(this, listCities, binding.tvSelectCity)
+                val listCities = CityHelper.getAllCities(selectedCountry, this@EditAdsActivity)
+                dialog.showSpinnerDialog(this@EditAdsActivity, listCities, binding.tvSelectCity)
             } else {
-                Toast.makeText(this, getString(R.string.no_country_selected), Toast.LENGTH_LONG)
+                Toast.makeText(this@EditAdsActivity, getString(R.string.no_country_selected), Toast.LENGTH_LONG)
                     .show()
             }
         }
-        //onClick tvSelectCategory
-        binding.tvSelectCategory.setOnClickListener {
+    }
+
+    //onClick tvSelectCategory
+    private fun onClickSelectCategory() = with(binding) {
+        tvSelectCategory.setOnClickListener {
             val listCategories =
                 resources.getStringArray(R.array.category).toMutableList() as ArrayList
-            dialog.showSpinnerDialog(this, listCategories, binding.tvSelectCategory)
+            dialog.showSpinnerDialog(this@EditAdsActivity, listCategories, binding.tvSelectCategory)
 
         }
-        //onClick GetImage
-        binding.btGetImage.setOnClickListener {
+    }
+
+    //onClick GetImage
+    private fun onClickGetImage() = with(binding) {
+        btGetImage.setOnClickListener {
             if (imageAdapter.mainArray.size < 1) {
-                ImagePicker.getMultiImages(this, ImagePicker.MAX_IMAGE_COUNT)
+                ImagePicker.getMultiImages(this@EditAdsActivity, ImagePicker.MAX_IMAGE_COUNT)
             } else {
                 openChooseImageFrag(null)
                 chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
             }
         }
+    }
 
-        binding.btPublish.setOnClickListener {
+    private fun onClickButtonPublish() = with(binding) {
+        btPublish.setOnClickListener {
             ad = fillAd()
             if (isEditState) {
-                ad?.copy(key = this.ad?.key)
+                ad?.copy(key = this@EditAdsActivity.ad?.key)
                     ?.let { it1 -> dbManager.publishAd(it1, onPublishFinish()) }
             } else {
 //                dbManager.publishAd(adTemp, onPublishFinish())
