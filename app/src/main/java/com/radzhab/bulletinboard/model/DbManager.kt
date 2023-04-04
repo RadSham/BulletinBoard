@@ -8,6 +8,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.radzhab.bulletinboard.utils.FilterManager
 
 class DbManager {
     val db = Firebase.database.getReference(MAIN_NODE)
@@ -19,7 +20,7 @@ class DbManager {
             db.child(ad.key ?: "empty")
                 .child(auth.uid!!).child(AD_NODE)
                 .setValue(ad).addOnCompleteListener {
-                    val adFilter = AdFilter(ad.time, "${ad.category}_${ad.time}")
+                    val adFilter = FilterManager.createFilter(ad)
                     db.child(ad.key ?: "empty").child(FILTER_NODE)
                         .setValue(adFilter).addOnCompleteListener {
                             finishWorkListener.onFinish()
@@ -147,6 +148,6 @@ class DbManager {
         const val FAVS_NODE = "favs"
         const val ADS_LIMIT = 2
         const val FILTER_TIME = "/adFilter/time"
-        const val FILTER_CAT_TIME = "/adFilter/catTime"
+        const val FILTER_CAT_TIME = "/adFilter/cat_time"
     }
 }

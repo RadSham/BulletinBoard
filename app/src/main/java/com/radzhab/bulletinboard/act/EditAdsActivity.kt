@@ -125,7 +125,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 edTelephone.text.toString(),
                 edEmail.text.toString(),
                 edIndex.text.toString(),
-                checkBoxWithSend.toString(),
+                checkBoxWithSend.isChecked.toString(),
                 tvSelectCategory.text.toString(),
                 edTitle.text.toString(),
                 edPrice.text.toString(),
