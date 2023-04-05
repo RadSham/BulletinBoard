@@ -37,6 +37,7 @@ import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
 import com.radzhab.bulletinboard.model.Ad
+import com.radzhab.bulletinboard.utils.FilterManager
 import com.radzhab.bulletinboard.viewmodel.FirebaseViewModel
 import com.squareup.picasso.Picasso
 
@@ -113,7 +114,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         ) {
             if (it.resultCode == RESULT_OK) {
                 filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
-                Log.d("MyLog","filter : $filter")
+                if (filter != null) {
+                    Log.d("MyLog", "filter : ${FilterManager.getFilter(filter!!)}")
+                    Log.d("MyLog", "filter : ${filter!!}")
+                }
             }
         }
     }
