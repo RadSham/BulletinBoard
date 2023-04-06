@@ -22,12 +22,23 @@ object FilterManager {
     }
 
     fun getFilter(filter: String): String {
-        val stringBuilder = StringBuilder()
+        val stringBuilderNode = StringBuilder()
+        val stringBuilderFilter = StringBuilder()
         val tempArray = filter.split("_")
-        if (tempArray[0] != "empty") stringBuilder.append("country_")
-        if (tempArray[1] != "empty") stringBuilder.append("city_")
-        if (tempArray[2] != "empty") stringBuilder.append("index_")
-        stringBuilder.append("withSent_time")
-        return stringBuilder.toString()
+        if (tempArray[0] != "empty") {
+            stringBuilderNode.append("country_")
+            stringBuilderFilter.append("${tempArray[0]}_")
+        }
+        if (tempArray[1] != "empty") {
+            stringBuilderNode.append("city_")
+            stringBuilderFilter.append("${tempArray[1]}_")
+        }
+        if (tempArray[2] != "empty") {
+            stringBuilderNode.append("index_")
+            stringBuilderFilter.append("${tempArray[2]}_")
+        }
+        stringBuilderNode.append("withSent_time")
+        stringBuilderFilter.append(tempArray[3])
+        return "$stringBuilderNode|$stringBuilderFilter"
     }
 }

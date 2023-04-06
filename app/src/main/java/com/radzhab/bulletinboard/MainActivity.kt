@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
             if (it.resultCode == RESULT_OK) {
                 filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
                 if (filter != null) {
-                    Log.d("MyLog", "filter : ${FilterManager.getFilter(filter!!)}")
+                    Log.d("MyLog", "getFilter : ${FilterManager.getFilter(filter!!)}")
                     Log.d("MyLog", "filter : ${filter!!}")
                 }
             }

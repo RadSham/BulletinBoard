@@ -34,9 +34,9 @@ class FilterActivity : AppCompatActivity() {
         val filter = intent.getStringExtra(FILTER_KEY)
         if (filter != null && filter != "empty") {
             val filterArray = filter.split("_")
-            if (filterArray[0] != getString(R.string.select_country) && filterArray[0] != "empty") tvSelectCountry.text =
+            if (filterArray[0] != "empty") tvSelectCountry.text =
                 filterArray[0]
-            if (filterArray[1] != getString(R.string.select_city) && filterArray[0] != "empty") tvSelectCity.text =
+            if (filterArray[1] != "empty") tvSelectCity.text =
                 filterArray[1]
             if (filterArray[2] != "empty") edIndex.setText(filterArray[2])
             checkBoxWithSend.isChecked = filterArray[3].toBoolean()
