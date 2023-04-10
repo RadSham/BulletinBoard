@@ -25,12 +25,15 @@ class FirebaseViewModel : ViewModel() {
         })
     }
 
-    fun loadAllAdsFromCatFirstPage(lastCatTime: String) {
-        dbManager.getAllAdsFromCatFirstPage(lastCatTime, object : DbManager.ReadDataCallback {
-            override fun readData(list: ArrayList<Ad>) {
-                liveAdsData.value = list
-            }
-        })
+    fun loadAllAdsFromCatFirstPage(lastCatTime: String, filter: String) {
+        dbManager.getAllAdsFromCatFirstPage(
+            lastCatTime,
+            filter,
+            object : DbManager.ReadDataCallback {
+                override fun readData(list: ArrayList<Ad>) {
+                    liveAdsData.value = list
+                }
+            })
     }
 
     fun loadAllAdsFromCatNextPage(catTime: String) {
