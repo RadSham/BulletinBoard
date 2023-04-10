@@ -55,7 +55,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     private val firebaseViewModel: FirebaseViewModel by viewModels()
     private var clearUpdate: Boolean = true
     private var currentCategory: String? = null
-    private var filter: String? = "empty"
+    private var filter = "empty"
+    private var filterDb = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,10 +115,9 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         ) {
             if (it.resultCode == RESULT_OK) {
                 filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
-                if (filter != null) {
-                    Log.d("MyLog", "getFilter : ${FilterManager.getFilter(filter!!)}")
-                    Log.d("MyLog", "filter : ${filter!!}")
-                }
+//                Log.d("MyLog", "getFilter : ${FilterManager.getFilter(filter)}")
+//                Log.d("MyLog", "filter : $filter")
+                filterDb = FilterManager.getFilter(filter)
             }
         }
     }
@@ -196,7 +196,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                 }
                 R.id.id_home -> {
                     currentCategory = getString(R.string.def)
-                    firebaseViewModel.loadAllAdsFirstPage()
+                    firebaseViewModel.loadAllAdsFirstPage(filterDb)
                     mainContent.toolbar.title = getString(R.string.def)
                     true
                 }
