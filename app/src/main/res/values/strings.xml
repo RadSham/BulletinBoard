@@ -59,6 +59,7 @@
     <string name="tel_desc">Телефон:</string>
     <!-- FilterActivity-->
     <string name="apply_filter">Применить фильтр</string>
+    <string name="clear_filter">Очистить фильтр</string>
 
     <!-- Ad List Item  -->
     <string name="price_desc">Цена:</string>
