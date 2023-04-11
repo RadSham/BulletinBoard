@@ -333,7 +333,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     private fun getAdsFromCat(adsList: ArrayList<Ad>) {
         val adFirst = adsList[0]
         if (currentCategory == getString(R.string.def)) {
-            firebaseViewModel.loadAllAdsNextPage(adFirst.time)
+            firebaseViewModel.loadAllAdsNextPage(adFirst.time, filterDb)
         } else {
             val catTime = "${adFirst.category}_${adFirst.time}"
             firebaseViewModel.loadAllAdsFromCatNextPage(catTime)
