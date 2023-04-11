@@ -335,8 +335,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         if (currentCategory == getString(R.string.def)) {
             firebaseViewModel.loadAllAdsNextPage(adFirst.time, filterDb)
         } else {
-            val catTime = "${adFirst.category}_${adFirst.time}"
-            firebaseViewModel.loadAllAdsFromCatNextPage(catTime)
+            firebaseViewModel.loadAllAdsFromCatNextPage(adFirst.category!!, adFirst.time, filterDb)
         }
     }
 
