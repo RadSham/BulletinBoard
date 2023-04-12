@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
@@ -63,6 +65,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        initAds()
         init()
         initRecyclerView()
         initViewModel()
@@ -89,6 +92,23 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     override fun onResume() {
         super.onResume()
         binding.mainContent.bNavView.selectedItemId = R.id.id_home
+        binding.mainContent.adView2.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.mainContent.adView2.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.mainContent.adView2.destroy()
+    }
+
+    private fun initAds() {
+        MobileAds.initialize(this)
+        val adRequest = AdRequest.Builder().build()
+        binding.mainContent.adView2.loadAd(adRequest)
     }
 
     private fun onActivityResult() {
