@@ -55,6 +55,7 @@
     <string name="with_send">С отправкой</string>
     <string name="send">Отправка</string>
     <string name="publish">Опубликовать</string>
+    <string name="publish_time">Время публикации : </string>
     <!-- DescActivity-->
     <string name="tel_desc">Телефон:</string>
     <!-- FilterActivity-->
