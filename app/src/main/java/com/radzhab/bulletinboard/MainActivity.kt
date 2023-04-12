@@ -39,6 +39,7 @@ import com.radzhab.bulletinboard.databinding.ActivityMainBinding
 import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
 import com.radzhab.bulletinboard.model.Ad
+import com.radzhab.bulletinboard.utils.AppMainState
 import com.radzhab.bulletinboard.utils.FilterManager
 import com.radzhab.bulletinboard.viewmodel.FirebaseViewModel
 import com.squareup.picasso.Picasso
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        initAds()
+//        initAds()
         init()
         initRecyclerView()
         initViewModel()
@@ -109,6 +110,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         MobileAds.initialize(this)
         val adRequest = AdRequest.Builder().build()
         binding.mainContent.adView2.loadAd(adRequest)
+        //Ads on main page
+        (application as AppMainState).showAdIfAvailable(this, null)
     }
 
     private fun onActivityResult() {
@@ -138,7 +141,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
 //                Log.d("MyLog", "getFilter : ${FilterManager.getFilter(filter)}")
 //                Log.d("MyLog", "filter : $filter")
                 filterDb = FilterManager.getFilter(filter)
-            } else if (it.resultCode == RESULT_CANCELED){
+            } else if (it.resultCode == RESULT_CANCELED) {
                 filterDb = ""
                 filter = "empty"
             }
