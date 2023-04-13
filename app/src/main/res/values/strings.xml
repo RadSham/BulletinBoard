@@ -35,6 +35,8 @@
     <string name="entry_to_g">У Вас уже есть аккаунт Google.</string>
     <!-- MainActivity  -->
     <string name="guest">Гость</string>
+    <string name="purchase_thanks">Спасибо за покупку</string>
+    <string name="purchase_failed">Не удалось осуществить покупку</string>
     <!-- EditActivity  -->
     <string name="select_country">*Выберите страну</string>
     <string name="select_city">*Выберите город</string>
