@@ -2,6 +2,7 @@ package com.radzhab.bulletinboard
 
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -40,6 +41,7 @@ import com.radzhab.bulletinboard.dialogHelper.DialogConst
 import com.radzhab.bulletinboard.dialogHelper.DialogHelper
 import com.radzhab.bulletinboard.model.Ad
 import com.radzhab.bulletinboard.utils.AppMainState
+import com.radzhab.bulletinboard.utils.BillingManager
 import com.radzhab.bulletinboard.utils.FilterManager
 import com.radzhab.bulletinboard.viewmodel.FirebaseViewModel
 import com.squareup.picasso.Picasso
@@ -60,13 +62,23 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     private var currentCategory: String? = null
     private var filter = "empty"
     private var filterDb = ""
+    private var pref: SharedPreferences? = null
+    private var isPremiumUser = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        pref = getSharedPreferences(BillingManager.MAIN_PREF, MODE_PRIVATE)
+        isPremiumUser = pref?.getBoolean(BillingManager.REMOVE_ADS_PREF, false)!!
+        isPremiumUser
+        if (!isPremiumUser) {
 //        initAds()
+            Toast.makeText(this,"NOT PREMIUM USER", Toast.LENGTH_LONG).show()
+        } else{
+            binding.mainContent.adView2.visibility = View.GONE
+        }
         init()
         initRecyclerView()
         initViewModel()
