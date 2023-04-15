@@ -18,7 +18,7 @@ class BillingManager(val act: AppCompatActivity) {
             .enablePendingPurchases().build()
     }
 
-    private fun savePurchase(isPurchase: Boolean){
+    private fun savePurchase(isPurchase: Boolean) {
         val pref = act.getSharedPreferences(MAIN_PREF, Context.MODE_PRIVATE)
         val editor = pref.edit()
         editor.putBoolean(REMOVE_ADS_PREF, isPurchase)
@@ -80,10 +80,18 @@ class BillingManager(val act: AppCompatActivity) {
                 billingClient?.acknowledgePurchase(acParams) { result ->
                     if (result.responseCode == BillingClient.BillingResponseCode.OK) {
                         savePurchase(true)
-                        Toast.makeText(act, act.getString(R.string.purchase_thanks), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            act,
+                            act.getString(R.string.purchase_thanks),
+                            Toast.LENGTH_LONG
+                        ).show()
                     } else {
                         savePurchase(false)
-                        Toast.makeText(act, act.getString(R.string.purchase_failed), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            act,
+                            act.getString(R.string.purchase_failed),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                 }
@@ -99,6 +107,10 @@ class BillingManager(val act: AppCompatActivity) {
                 }
             }
         }
+    }
+
+    fun closeConnection() {
+        billingClient?.endConnection()
     }
 
     companion object {

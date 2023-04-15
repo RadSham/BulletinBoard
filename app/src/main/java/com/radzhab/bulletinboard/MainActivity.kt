@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     private var filterDb = ""
     private var pref: SharedPreferences? = null
     private var isPremiumUser = false
+    private var bManager: BillingManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +76,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         isPremiumUser
         if (!isPremiumUser) {
 //        initAds()
-            Toast.makeText(this,"NOT PREMIUM USER", Toast.LENGTH_LONG).show()
-        } else{
+            Toast.makeText(this, "NOT PREMIUM USER", Toast.LENGTH_LONG).show()
+        } else {
             binding.mainContent.adView2.visibility = View.GONE
         }
         init()
@@ -116,6 +117,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
     override fun onDestroy() {
         super.onDestroy()
         binding.mainContent.adView2.destroy()
+        bManager?.closeConnection()
     }
 
     private fun initAds() {
@@ -265,6 +267,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
             }
             R.id.id_dm -> {
                 getAdsFromCat(getString(R.string.ad_dm))
+            }
+            R.id.remove_ads -> {
+                bManager = BillingManager(this)
+                bManager?.startConnection()
             }
             R.id.id_sign_in -> dialogHelper.createSignDialog(DialogConst.SIGN_IN_STATE)
             R.id.id_sign_up -> dialogHelper.createSignDialog(DialogConst.SIGN_UP_STATE)

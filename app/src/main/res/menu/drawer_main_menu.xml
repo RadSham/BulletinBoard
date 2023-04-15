@@ -29,6 +29,10 @@
     <item android:title="@string/ad_cat2_acc" android:id="@+id/acc_cat">
         <menu>
             <item
+                android:title="@string/remove_ads"
+                android:id="@+id/remove_ads"
+                />
+            <item
                 android:title="@string/ad_sign_up"
                 android:id="@+id/id_sign_up"
                 />

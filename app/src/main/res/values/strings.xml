@@ -11,6 +11,7 @@
     <string name="ad_phone">Смартфоны</string>
     <string name="ad_dm">Техника</string>
     <string name="ad_cat2_acc">Аккаунт</string>
+    <string name="remove_ads">Удалить рекламу</string>
     <string name="ad_sign_up">Регистрация</string>
     <string name="ad_sign_in">Вход</string>
     <string name="ad_sign_out">Выход</string>
