@@ -91,10 +91,17 @@ class DescriptionActivity : AppCompatActivity() {
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val imageCounter = "${position + 1}/${binding.viewPager.adapter?.itemCount}"
-                binding.tvImageCounter.text = imageCounter
+                updateImageCounter(position)
             }
         })
+    }
+
+    private fun updateImageCounter(counter: Int) {
+        var index = 1
+        val itemCount = binding.viewPager.adapter?.itemCount
+        if (itemCount == 0) index = 0
+        val imageCounter = "${counter + index}/$itemCount"
+        binding.tvImageCounter.text = imageCounter
     }
 
 }

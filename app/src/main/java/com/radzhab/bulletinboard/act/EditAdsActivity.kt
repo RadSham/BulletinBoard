@@ -149,6 +149,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         edTitle.setText(ad.title)
         edPrice.setText(ad.price)
         edDescription.setText(ad.description)
+        updateImageCounter(0)
         ImageManager.fillImageArray(ad, imageAdapter)
 
     }
@@ -175,6 +176,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         binding.scrollViewMine.visibility = View.VISIBLE
         imageAdapter.update(list)
         chooseImageFrag = null
+        updateImageCounter(binding.vpImages.currentItem)
     }
 
     fun openChooseImageFrag(newList: List<Uri>?) {
@@ -267,9 +269,16 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         binding.vpImages.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val imageCounter = "${position + 1}/${binding.vpImages.adapter?.itemCount}"
-                binding.tvImageCounterEa.text = imageCounter
+                updateImageCounter(position)
             }
         })
+    }
+
+    private fun updateImageCounter(counter: Int) {
+        var index = 1
+        val itemCount = binding.vpImages.adapter?.itemCount
+        if (itemCount == 0) index = 0
+        val imageCounter = "${counter + index}/${binding.vpImages.adapter?.itemCount}"
+        binding.tvImageCounterEa.text = imageCounter
     }
 }
