@@ -68,7 +68,11 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 val listCities = CityHelper.getAllCities(selectedCountry, this@EditAdsActivity)
                 dialog.showSpinnerDialog(this@EditAdsActivity, listCities, binding.tvSelectCity)
             } else {
-                Toast.makeText(this@EditAdsActivity, getString(R.string.no_country_selected), Toast.LENGTH_LONG)
+                Toast.makeText(
+                    this@EditAdsActivity,
+                    getString(R.string.no_country_selected),
+                    Toast.LENGTH_LONG
+                )
                     .show()
             }
         }
@@ -99,8 +103,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         btPublish.setOnClickListener {
             ad = fillAd()
             if (isEditState) {
-                ad?.copy(key = this@EditAdsActivity.ad?.key)
-                    ?.let { it1 -> dbManager.publishAd(it1, onPublishFinish()) }
+                dbManager.publishAd(ad!!, onPublishFinish())
             } else {
 //                dbManager.publishAd(adTemp, onPublishFinish())
                 uploadImages()
@@ -130,15 +133,14 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
                 edTitle.text.toString(),
                 edPrice.text.toString(),
                 edDescription.text.toString(),
-                "empty",
-                "empty",
-                "empty",
+                ad?.mainImage ?: "empty",
+                ad?.secondImage ?: "empty",
+                ad?.thirdImage ?: "empty",
                 ad?.key ?: dbManager.db.push().key.toString(),
                 dbManager.auth.uid,
-                System.currentTimeMillis().toString()
+                ad?.time ?: System.currentTimeMillis().toString()
             )
         }
-
         return adTemp
     }
 
@@ -227,7 +229,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             .child(dbManager.auth.uid!!)
             .child("image_${System.currentTimeMillis()}")
         val upTask = imStorageReference.putBytes(byteArray)
-        upTask.continueWithTask { task ->
+        upTask.continueWithTask {
             imStorageReference.downloadUrl
         }.addOnCompleteListener(listener)
     }
