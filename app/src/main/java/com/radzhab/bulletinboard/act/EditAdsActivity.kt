@@ -102,12 +102,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     private fun onClickButtonPublish() = with(binding) {
         btPublish.setOnClickListener {
             ad = fillAd()
-            if (isEditState) {
-                dbManager.publishAd(ad!!, onPublishFinish())
-            } else {
-//                dbManager.publishAd(adTemp, onPublishFinish())
-                uploadImages()
-            }
+            uploadImages()
         }
     }
 
@@ -163,8 +158,7 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         isEditState = isEditState()
         if (isEditState()) {
             ad = intent.getSerializableExtra(MainActivity.ADS_DATA) as Ad
-            if (ad != null)
-                fillViews(ad!!)
+            if (ad != null) fillViews(ad!!)
         }
     }
 
@@ -193,14 +187,30 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     }
 
     private fun uploadImages() {
-        if (imageAdapter.mainArray.size == imageIndex) {
+        if (imageIndex == 3) {
             dbManager.publishAd(ad!!, onPublishFinish())
             return
         }
-        val byteArray = prepareImageByteArray(imageAdapter.mainArray[imageIndex])
-        uploadImage(byteArray) {
-//            dbManager.publishAd(ad!!, onPublishFinish())
-            nextImage(it.result.toString())
+        val urlOld = getUrlFromAd()
+        if (imageAdapter.mainArray.size > imageIndex) {
+            val byteArray = prepareImageByteArray(imageAdapter.mainArray[imageIndex])
+            if (urlOld.startsWith("http")) {
+                updateImage(byteArray, urlOld) {
+                    nextImage(it.result.toString())
+                }
+            } else {
+                uploadImage(byteArray) {
+                    nextImage(it.result.toString())
+                }
+            }
+        } else {
+            if (urlOld.startsWith("http")) {
+                deleteImageByUrl(urlOld) {
+                    nextImage("empty")
+                }
+            } else {
+                nextImage("empty")
+            }
         }
     }
 
@@ -216,6 +226,10 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             1 -> ad = ad?.copy(secondImage = uri)
             2 -> ad = ad?.copy(thirdImage = uri)
         }
+    }
+
+    private fun getUrlFromAd(): String {
+        return listOf(ad?.mainImage!!, ad?.secondImage!!, ad?.thirdImage!!)[imageIndex]
     }
 
     private fun prepareImageByteArray(bitmap: Bitmap): ByteArray {
@@ -234,6 +248,21 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         }.addOnCompleteListener(listener)
     }
 
+    private fun deleteImageByUrl(oldUrl: String, listener: OnCompleteListener<Void>) {
+        dbManager.dbStorage.storage
+            .getReferenceFromUrl(oldUrl)
+            .delete().addOnCompleteListener(listener)
+
+    }
+
+    private fun updateImage(byteArray: ByteArray, url: String, listener: OnCompleteListener<Uri>) {
+        val imStorageReference = dbManager.dbStorage.storage.getReferenceFromUrl(url)
+        val upTask = imStorageReference.putBytes(byteArray)
+        upTask.continueWithTask {
+            imStorageReference.downloadUrl
+        }.addOnCompleteListener(listener)
+    }
+
     private fun imageChangeCounter() {
         binding.vpImages.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -243,5 +272,4 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
             }
         })
     }
-
 }
