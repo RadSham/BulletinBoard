@@ -11,7 +11,6 @@ import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.databinding.SelectImageFragItemBinding
 import com.radzhab.bulletinboard.utils.AdapterCallback
 import com.radzhab.bulletinboard.utils.ImageManager
-import com.radzhab.bulletinboard.utils.ImagePicker
 import com.radzhab.bulletinboard.utils.ItemTouchMoveCallback
 
 class SelectImageRvAdapter(val adapterCallback : AdapterCallback) : RecyclerView.Adapter<SelectImageRvAdapter.ImageHolder>(),
@@ -50,7 +49,9 @@ class SelectImageRvAdapter(val adapterCallback : AdapterCallback) : RecyclerView
 
             viewBinding.imEditImage.setOnClickListener {
                 viewBinding.pBar.visibility = View.VISIBLE
-                ImagePicker.getSingleImages(context as EditAdsActivity)
+                //before android 13
+//                ImagePicker.getSingleImages(context as EditAdsActivity)
+                (context as EditAdsActivity).launchPickerSingleMode()
                 context.editImagePosition = adapterPosition
             }
 

@@ -1,3 +1,6 @@
 /build
 google-services.json
 /release/app-release.aab
+build.gradle
+/release/app-release.apk
+/release/output-metadata.json

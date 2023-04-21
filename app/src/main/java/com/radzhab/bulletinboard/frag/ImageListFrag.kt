@@ -1,17 +1,22 @@
 package com.radzhab.bulletinboard.frag
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.get
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.radzhab.bulletinboard.Constants.TAG_LOG
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.act.EditAdsActivity
 import com.radzhab.bulletinboard.databinding.ListImageFragBinding
@@ -106,14 +111,16 @@ class ImageListFrag(
             }
 
             addImageItem?.setOnMenuItemClickListener {
-                val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
-                ImagePicker.addImages(activity as EditAdsActivity, imageCount)
+                //before android 13
+//                val imageCount = ImagePicker.MAX_IMAGE_COUNT - adapter.mainArray.size
+//                ImagePicker.addImages(activity as EditAdsActivity, imageCount)
+                launchPickerAddSingleMode(activity as EditAdsActivity)
                 true
             }
         }
     }
 
-    fun updateAdapter(listUris: List<Uri>, activity: Activity) {
+    private fun updateAdapter(listUris: List<Uri>, activity: Activity) {
         resizeSelectedImages(listUris, false, activity)
     }
 
@@ -132,4 +139,32 @@ class ImageListFrag(
     fun imageResize() {
 
     }
+
+    //add multiple pictures
+    private fun launchPickerAddSingleMode(edAct: EditAdsActivity) {
+        try {
+            startForAddSingleModeResult.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        } catch (ex: ActivityNotFoundException) {
+            edAct.showToast(ex.localizedMessage ?: "error")
+        }
+    }
+
+    private val startForAddSingleModeResult =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { currentUri ->
+            if (currentUri != null) {
+                Log.d(TAG_LOG, "Number of items selected: currentUri")
+                // output log.
+                ImagePicker.openChooseImageFrag(activity as EditAdsActivity)
+                (activity as EditAdsActivity).chooseImageFrag?.updateAdapter(
+                    listOf(currentUri),
+                    (activity as EditAdsActivity)
+                )
+            } else {
+                Log.d(TAG_LOG, "No media selected")
+            }
+        }
 }

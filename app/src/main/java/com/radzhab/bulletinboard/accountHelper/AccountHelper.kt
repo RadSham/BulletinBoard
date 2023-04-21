@@ -1,6 +1,5 @@
 package com.radzhab.bulletinboard.accountHelper
 
-import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -18,11 +17,11 @@ class AccountHelper(private val act: MainActivity) {
             act.myAuth.currentUser?.delete()?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     act.myAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                signUpWithEmailSuccessful(task.result.user!!)
+                        .addOnCompleteListener { task2 ->
+                            if (task2.isSuccessful) {
+                                signUpWithEmailSuccessful(task2.result.user!!)
                             } else {
-                                signUpWithEmailException(task.exception!!, email, password)
+                                signUpWithEmailException(task2.exception!!, email, password)
                             }
                         }
                 }
@@ -66,11 +65,11 @@ class AccountHelper(private val act: MainActivity) {
             act.myAuth.currentUser?.delete()?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     act.myAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                act.uiUpdate(task.result.user)
+                        .addOnCompleteListener { task2 ->
+                            if (task2.isSuccessful) {
+                                act.uiUpdate(task2.result.user)
                             } else {
-                                signInWithEmailException(task.exception!!, email, password)
+                                signInWithEmailException(task2.exception!!, email, password)
                             }
                         }
                 }
@@ -146,12 +145,12 @@ class AccountHelper(private val act: MainActivity) {
         val credential = GoogleAuthProvider.getCredential(token, null)
         act.myAuth.currentUser?.delete()?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                act.myAuth.signInWithCredential(credential).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
+                act.myAuth.signInWithCredential(credential).addOnCompleteListener { task2 ->
+                    if (task2.isSuccessful) {
                         Toast.makeText(act, "SignIn done", Toast.LENGTH_LONG).show()
-                        act.uiUpdate(task.result?.user)
+                        act.uiUpdate(task2.result?.user)
                     } else {
-                        Log.d("MyLog", "GoogleSignInException : " + task.exception)
+                        Toast.makeText(act, "GoogleSignInException : " + task2.exception, Toast.LENGTH_LONG).show()
                     }
                 }
             }

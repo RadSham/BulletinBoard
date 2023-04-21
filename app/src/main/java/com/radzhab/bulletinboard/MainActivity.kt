@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -140,7 +139,7 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                             dialogHelper.accHelper.signInFirebaseWithGoogle(account.idToken.toString())
                         }
                     } catch (e: ApiException) {
-                        Log.d("MyLog", "Api error : ${e.message}")
+                        Toast.makeText(this, "Api error : ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -152,8 +151,8 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
         ) {
             if (it.resultCode == RESULT_OK) {
                 filter = it.data?.getStringExtra(FilterActivity.FILTER_KEY)!!
-//                Log.d("MyLog", "getFilter : ${FilterManager.getFilter(filter)}")
-//                Log.d("MyLog", "filter : $filter")
+//                Log.d(TAG_LOG, "getFilter : ${FilterManager.getFilter(filter)}")
+//                Log.d(TAG_LOG, "filter : $filter")
                 filterDb = FilterManager.getFilter(filter)
             } else if (it.resultCode == RESULT_CANCELED) {
                 filterDb = ""

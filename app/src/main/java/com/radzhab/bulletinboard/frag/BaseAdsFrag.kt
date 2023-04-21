@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.radzhab.bulletinboard.Constants.TAG_LOG
 import com.radzhab.bulletinboard.R
 import com.radzhab.bulletinboard.utils.BillingManager
 
@@ -83,7 +84,7 @@ open class BaseAdsFrag : Fragment(), InterAdsClose {
             interAd?.show(activity as Activity)
         } else {
             onClose()
-            Log.d("MyLog", "The interstitial ad wasn't ready yet.")
+            Log.d(TAG_LOG, "The interstitial ad wasn't ready yet.")
         }
     }
 

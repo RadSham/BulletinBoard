@@ -1,10 +1,13 @@
 package com.radzhab.bulletinboard.act
 
+import android.content.ActivityNotFoundException
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import android.widget.*
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.tasks.OnCompleteListener
@@ -21,6 +24,7 @@ import com.radzhab.bulletinboard.utils.CityHelper
 import com.radzhab.bulletinboard.utils.ImageManager
 import com.radzhab.bulletinboard.utils.ImagePicker
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     lateinit var binding: ActivityEditAdsBinding
@@ -91,7 +95,10 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
     private fun onClickGetImage() = with(binding) {
         btGetImage.setOnClickListener {
             if (imageAdapter.mainArray.size < 1) {
-                ImagePicker.getMultiImages(this@EditAdsActivity, ImagePicker.MAX_IMAGE_COUNT)
+                //before android 13
+//                ImagePicker.getMultiImages(this@EditAdsActivity, ImagePicker.MAX_IMAGE_COUNT)
+                launchPickerMultipleMode()
+                ImagePicker.closePicsFragment(this@EditAdsActivity)
             } else {
                 openChooseImageFrag(null)
                 chooseImageFrag?.updateAdapterFromEdit(imageAdapter.mainArray)
@@ -280,5 +287,53 @@ class EditAdsActivity : AppCompatActivity(), FragmentCloseInterface {
         if (itemCount == 0) index = 0
         val imageCounter = "${counter + index}/${binding.vpImages.adapter?.itemCount}"
         binding.tvImageCounterEa.text = imageCounter
+    }
+
+    //upload single picture
+    fun launchPickerSingleMode() {
+        val m = ActivityResultContracts.PickVisualMedia.ImageOnly
+        try {
+            startForSingleModeResult.launch(
+                PickVisualMediaRequest.Builder().setMediaType(m).build()
+            )
+        } catch (ex: ActivityNotFoundException) {
+            showToast(ex.localizedMessage ?: "error")
+        }
+    }
+
+    private val startForSingleModeResult =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { currentUri ->
+            if (currentUri != null) {
+                showToast("Selected URI: $currentUri")
+                ImagePicker.openChooseImageFrag(this)
+                ImagePicker.singleImage(this, currentUri)
+            } else {
+                showToast("No media selected")
+            }
+        }
+
+    //upload multiple pictures
+    private fun launchPickerMultipleMode() {
+        try {
+            startForMultipleModeResult.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } catch (ex: ActivityNotFoundException) {
+            showToast(ex.localizedMessage ?: "error")
+        }
+    }
+
+    private val startForMultipleModeResult =
+        registerForActivityResult(
+            ActivityResultContracts.PickMultipleVisualMedia(ImagePicker.MAX_IMAGE_COUNT)
+        ) { uris ->
+            if (uris.isNotEmpty()) {
+                ImagePicker.getMultiSelectedImages(this, uris)
+            } else {
+                showToast("No media selected")
+            }
+        }
+
+
+    fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
