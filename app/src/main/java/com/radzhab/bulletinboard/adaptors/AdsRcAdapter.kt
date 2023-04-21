@@ -38,14 +38,25 @@ class AdsRcAdapter(val act: MainActivity) : RecyclerView.Adapter<AdsRcAdapter.Ad
     }
 
     fun updateAdapter(newList: List<Ad>) {
-        val tempArray = ArrayList<Ad>()
-        tempArray.addAll(adArray)
-        tempArray.addAll(newList)
-
+        val tempArray = checkIfFavsChanged(adArray, newList)
         val diffResult = DiffUtil.calculateDiff(DiffUtilHelper(adArray, tempArray))
         diffResult.dispatchUpdatesTo(this)
         adArray.clear()
         adArray.addAll(tempArray)
+    }
+
+    fun checkIfFavsChanged(list: List<Ad>, list2: List<Ad>): MutableList<Ad> {
+        val tempArray = ArrayList<Ad>()
+        tempArray.addAll(list)
+        loop@ for (ad2 in list2) {
+            for (ad in list)
+                if (ad.key == ad2.key && ad.isFav != ad2.isFav) {
+                    tempArray[tempArray.indexOf(ad)] = ad2
+                    continue@loop
+                }
+            if (!tempArray.contains(ad2)) tempArray.add(ad2)
+        }
+        return tempArray
     }
 
     fun updateAdapterWithClear(newList: List<Ad>) {

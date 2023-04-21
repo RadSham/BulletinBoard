@@ -362,7 +362,10 @@ class MainActivity : AppCompatActivity(), OnNavigationItemSelectedListener,
                 if (!recyclerView.canScrollVertically(SCROLL_DOWN) && (newState == RecyclerView.SCROLL_STATE_IDLE)) {
                     clearUpdate = false
                     val adsList = firebaseViewModel.liveAdsData.value!!
-                    if (adsList.isNotEmpty()) {
+                    if (adsList.isNotEmpty() && (toolbar.title != getString(R.string.ad_my_adds)) && (toolbar.title != getString(
+                            R.string.ad_my_favs
+                        ))
+                    ) {
                         getAdsFromCat(adsList)
                     }
                 }
